@@ -31,6 +31,7 @@ public class Board extends Timestamped{
     private Long bookId;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private Status status = Status.Post;
 
 

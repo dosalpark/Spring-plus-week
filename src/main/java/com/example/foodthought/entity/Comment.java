@@ -25,6 +25,7 @@ public class Comment extends Timestamped {
     private String contents;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private Status status = Status.Post;
 
     @ManyToOne(fetch = FetchType.LAZY)

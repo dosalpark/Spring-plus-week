@@ -36,6 +36,7 @@ public class User extends Timestamped{
     private String userPhoto;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private UserRoleEnum role = UserRoleEnum.USER;
 
     public User(CreateUserDto createUserDto, String passwordEncryption, String fileName){
