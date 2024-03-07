@@ -93,18 +93,18 @@ public class AdminService {
 
 
     // book
-    public void createBook(CreateBookRequestDto createBookRequestDto, MultipartFile file) throws IOException {
-        bookService.createBook(createBookRequestDto, file);
+    public ResponseDto<Boolean> createBook(CreateBookRequestDto createBookRequestDto, MultipartFile file) throws IOException {
+        return bookService.createBook(createBookRequestDto, file);
     }
 
 
-    public void updateBook(Long bookId, UpdateBookRequestDto updateBookRequestDto, MultipartFile file) throws IOException {
-        bookService.updateBook(bookId, updateBookRequestDto, file);
+    public ResponseDto<Boolean> updateBook(Long bookId, UpdateBookRequestDto updateBookRequestDto, MultipartFile file) throws IOException {
+        return bookService.updateBook(bookId, updateBookRequestDto, file);
     }
 
 
-    public void deleteBook(Long bookId) {
-        bookService.deleteBook(bookId);
+    public ResponseDto<Boolean> deleteBook(Long bookId) {
+        return bookService.deleteBook(bookId);
     }
 
 }

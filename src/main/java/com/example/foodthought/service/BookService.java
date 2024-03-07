@@ -4,137 +4,65 @@ import com.example.foodthought.common.dto.ResponseDto;
 import com.example.foodthought.dto.book.CreateBookRequestDto;
 import com.example.foodthought.dto.book.GetBookResponseDto;
 import com.example.foodthought.dto.book.UpdateBookRequestDto;
-import com.example.foodthought.entity.Book;
-import com.example.foodthought.repository.BookRepository;
-import com.example.foodthought.util.StorageService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class BookService {
-
-    private final BookRepository bookRepository;
-    private final StorageService storageService;
+public interface BookService {
 
 
-    //책 전체 조회
-    public ResponseDto<List<GetBookResponseDto>> getAllBook(int page, int size, String sort, boolean isAsc, String title) {
-        title = title.trim();
-        if(title.isEmpty()){
-            if (bookRepository.findAllByTitleContains(title).isEmpty()) {
-                throw new IllegalArgumentException("도서명에 " + title + "이 들어가는 책이 없습니다.");
-            }
-        } else {
-            if (bookRepository.findAll().isEmpty()) {
-                throw new IllegalArgumentException("등록된 책이 없습니다.");
-            }
-        }
-        PageRequest pageRequest = PageRequest.of(page, size, !isAsc ? Sort.by(sort).descending() : Sort.by(sort).ascending());
-        Page<Book> books = bookRepository.findAllByTitleContains(pageRequest, title);
-        return ResponseDto.success(200, convertToDtoList(books));
-    }
+    /**
+     * 모든 책을 검색한다
+     *
+     * @param page  default 0
+     * @param size  default 10
+     * @param sort  정렬기준(String)
+     * @param isAsc ASC, DESC
+     * @param title 검색할 책 제목(선택)
+     * @return List<GetBookResponseDto>
+     */
+    public ResponseDto<List<GetBookResponseDto>> getAllBook(int page, int size, String sort, boolean isAsc, String title);
 
 
-    //책 단권 조회
-    public ResponseDto<GetBookResponseDto> getBook(Long bookId) {
-        return ResponseDto.success(200, convertToDto(findBook(bookId)));
-    }
+    /**
+     * 단일 도서를 검색한다
+     *
+     * @param bookId 검색할 책의 ID값
+     * @return GetBookResponseDto
+     */
+    public ResponseDto<GetBookResponseDto> getBook(Long bookId);
 
 
-    //책 입력
-    @Transactional
-    public ResponseDto<Void> createBook(CreateBookRequestDto createBookRequestDto, MultipartFile file) throws IOException {
-        bookRepository.save(convertToBook(createBookRequestDto, convertToString(file)));
-        return ResponseDto.success(201);
-    }
+    /**
+     * 책 입력
+     *
+     * @param createBookRequestDto 책 내용 입력
+     * @param file                 책 이미지 파일 업로드
+     * @return 성공시 true, 실패는 Exception 으로 처리
+     * @throws IOException 파일이 없거나 비정상적인 경우 발생
+     */
+    public ResponseDto<Boolean> createBook(CreateBookRequestDto createBookRequestDto, MultipartFile file) throws IOException;
 
 
-    //책 수정
-    @Transactional
-    public void updateBook(
-            Long bookId,
-            UpdateBookRequestDto updateBookRequestDto,
-            MultipartFile file) throws IOException {
-        Book book = findBook(bookId);
-        book.update(updateBookRequestDto, convertToString(file));
-        bookRepository.save(book);
-    }
+    /**
+     * 책 수정
+     *
+     * @param bookId               수정할 책 번호
+     * @param updateBookRequestDto 수정할 책 내용
+     * @param file                 수정할 이미지 파일 업로드
+     * @return 성공시 true, 실패는 Exception 으로 처리
+     * @throws IOException 파일이 없거나 비정상적인 경우 발생
+     */
+    public ResponseDto<Boolean> updateBook(Long bookId, UpdateBookRequestDto updateBookRequestDto, MultipartFile file) throws IOException;
 
 
-    //책 삭제
-    @Transactional
-    public void deleteBook(Long bookId) {
-        bookRepository.delete(findBook(bookId));
-    }
+    /**
+     * 책 삭제
+     *
+     * @param bookId 삭제할 책 번호
+     * @return 성공시 true, 실패는 Exception 으로 처리
+     */
+    public ResponseDto<Boolean> deleteBook(Long bookId);
 
-
-
-    //책 실존유무 조회
-    private Book findBook(Long bookId) {
-        return bookRepository.findById(bookId).orElseThrow(()
-                -> new IllegalArgumentException("해당하는 책이 없습니다.")
-        );
-    }
-
-
-    //책 한권을 GetBookResponseDto로 변환
-    private GetBookResponseDto convertToDto(Book book) {
-        return GetBookResponseDto.builder()
-                .title(book.getTitle())
-                .author(book.getAuthor())
-                .publisher(book.getPublisher())
-                .image(book.getImage())
-                .category(book.getCategory())
-                .build();
-    }
-
-
-    //북리스트를 builder 이용해서 GetBookResponseDto 리스트로 변환
-    private List<GetBookResponseDto> convertToDtoList(Page<Book> books) {
-        List<GetBookResponseDto> getBookResponseDtos = new ArrayList<>();
-        for (Book book : books) {
-            GetBookResponseDto dto = GetBookResponseDto.builder()
-                    .title(book.getTitle())
-                    .author(book.getAuthor())
-                    .publisher(book.getPublisher())
-                    .image(book.getImage())
-                    .category(book.getCategory())
-                    .createAt(book.getCreateAt())
-                    .modifiedAt(book.getModifiedAt())
-                    .build();
-            getBookResponseDtos.add(dto);
-        }
-        return getBookResponseDtos;
-    }
-
-
-    //CreateRequestDto의 정보를 Book으로 변환
-    private Book convertToBook(CreateBookRequestDto dto, String image) {
-        return Book.builder()
-                .title(dto.getTitle())
-                .author(dto.getAuthor())
-                .publisher(dto.getPublisher())
-                .image(image)
-                .category(dto.getCategory())
-                .build();
-    }
-
-
-    //file을 주소로 변환
-    private String convertToString(MultipartFile file) throws IOException {
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("이미지를 업로드 해주세요");
-        }
-        return storageService.uploadFile(file);
-    }
 }

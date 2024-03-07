@@ -2,9 +2,7 @@ package com.example.foodthought.controller;
 
 import com.example.foodthought.common.dto.ResponseDto;
 import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
-import com.example.foodthought.dto.board.GetBoardResponseDto;
 import com.example.foodthought.dto.book.CreateBookRequestDto;
-import com.example.foodthought.dto.book.GetBookResponseDto;
 import com.example.foodthought.dto.book.UpdateBookRequestDto;
 import com.example.foodthought.dto.comment.CommentResponse;
 import com.example.foodthought.security.UserDetailsImpl;
@@ -102,29 +100,27 @@ public class AdminController {
     //book
     //책 입력
     @PostMapping("/api/books")
-    public ResponseEntity<ResponseDto<List<GetBookResponseDto>>> createBook(
+    public ResponseEntity<ResponseDto<Boolean>> createBook(
             @RequestPart CreateBookRequestDto createBookRequestDto,
             @RequestPart(value = "bookImage", required = true) MultipartFile file) throws IOException {
         adminService.createBook(createBookRequestDto, file);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.createBook(createBookRequestDto, file));
     }
 
 
     //책 수정
     @PutMapping("/api/books/{bookId}")
-    public ResponseEntity<ResponseDto<Void>> updateBook(
+    public ResponseEntity<ResponseDto<Boolean>> updateBook(
             @PathVariable Long bookId,
             @RequestPart UpdateBookRequestDto updateBookRequestDto,
             @RequestPart(value = "bookImage", required = true) MultipartFile file) throws IOException {
-        adminService.updateBook(bookId, updateBookRequestDto, file);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.updateBook(bookId, updateBookRequestDto, file));
     }
 
 
     //책 삭제
     @DeleteMapping("/api/books/{bookId}")
-    public ResponseEntity<ResponseDto<Void>> deleteBook(@PathVariable Long bookId) {
-        adminService.deleteBook(bookId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<ResponseDto<Boolean>> deleteBook(@PathVariable Long bookId) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.deleteBook(bookId));
     }
 }
