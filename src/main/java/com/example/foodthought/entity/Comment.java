@@ -26,7 +26,7 @@ public class Comment extends Timestamped {
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private Status status = Status.Post;
+    private Status status = Status.POST;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_Id", nullable = false)
@@ -51,7 +51,7 @@ public class Comment extends Timestamped {
     }
 
     public void block() {
-        this.status = Status.Blocked;
+        this.status = Status.BLOCKED;
     }
 
     public void updateComment(CommentRequest commentRequest) {

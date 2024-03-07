@@ -173,7 +173,7 @@ public class CommentService {
                     .createAt(comment.getCreateAt())
                     .modifiedAt(comment.getModifiedAt())
                     .build();
-            if(comment.getStatus() == Status.Blocked) {
+            if(comment.getStatus() == Status.BLOCKED) {
                 throw new IllegalArgumentException("Block 된 게시물 입니다");
             }
             addRepliesToResponse(comment, commentResponse);
