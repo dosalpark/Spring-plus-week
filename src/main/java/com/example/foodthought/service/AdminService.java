@@ -2,6 +2,7 @@ package com.example.foodthought.service;
 
 import com.example.foodthought.common.dto.ResponseDto;
 import com.example.foodthought.dto.admin.GetUsersResponseDto;
+import com.example.foodthought.dto.admin.UpdateStatusRequestDto;
 import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.book.CreateBookRequestDto;
 import com.example.foodthought.dto.book.UpdateBookRequestDto;
@@ -58,14 +59,14 @@ public class AdminService {
 
     //board
     @Transactional
-    public void deleteAdminBoard(Long boardId) {
-        boardService.deleteAdminBoard(boardId);
+    public ResponseDto<Boolean> deleteAdminBoard(Long boardId) {
+        return boardService.deleteAdminBoard(boardId);
     }
 
 
     @Transactional
-    public void blockBoard(Long boardId) {
-        boardService.blockBoard(boardId);
+    public ResponseDto<Boolean> updateStatusBoard(Long boardId, UpdateStatusRequestDto updateStatusRequestDto) {
+        return boardService.updateStatusBoard(boardId, updateStatusRequestDto);
     }
 
 

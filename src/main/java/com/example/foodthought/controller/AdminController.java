@@ -1,6 +1,7 @@
 package com.example.foodthought.controller;
 
 import com.example.foodthought.common.dto.ResponseDto;
+import com.example.foodthought.dto.admin.UpdateStatusRequestDto;
 import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.book.CreateBookRequestDto;
 import com.example.foodthought.dto.book.UpdateBookRequestDto;
@@ -44,28 +45,26 @@ public class AdminController {
 
     //board
     @DeleteMapping("/api/boards/{boardId}")
-    public ResponseEntity deleteAdminBoard(@PathVariable Long boardId) {
-        adminService.deleteAdminBoard(boardId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<ResponseDto<Boolean>> deleteAdminBoard(@PathVariable Long boardId) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.deleteAdminBoard(boardId));
     }
 
 
-    @PutMapping("/api/boards/{boardId}/block")
-    public ResponseEntity updateAdminBoard(@PathVariable Long boardId) {
-        adminService.blockBoard(boardId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    @PutMapping("/api/boards/{boardId}/status")
+    public ResponseEntity<ResponseDto<Boolean>> updateStatusAdminBoard(@PathVariable Long boardId,
+                                                                       @RequestBody UpdateStatusRequestDto updateStatusRequestDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.updateStatusBoard(boardId, updateStatusRequestDto));
     }
 
     @GetMapping("/api/boards")
-    public ResponseDto<List<GetBoardAdminResponseDto>> getAdminAllBoard(
+    public ResponseEntity<ResponseDto<List<GetBoardAdminResponseDto>>> getAdminAllBoard(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createAt") String sort,
             @RequestParam(defaultValue = "false") boolean isAsc
     ) {
-        return adminService.getAdminAllBoard(page, size, sort, isAsc);
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.getAdminAllBoard(page, size, sort, isAsc));
     }
-
 
 
     //comment

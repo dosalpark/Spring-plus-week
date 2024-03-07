@@ -1,189 +1,96 @@
 package com.example.foodthought.service;
 
 import com.example.foodthought.common.dto.ResponseDto;
+import com.example.foodthought.dto.admin.UpdateStatusRequestDto;
 import com.example.foodthought.dto.board.CreateBoardRequestDto;
 import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.board.GetBoardResponseDto;
 import com.example.foodthought.dto.board.UpdateBoardRequestDto;
-import com.example.foodthought.entity.*;
-import com.example.foodthought.repository.BoardRepository;
-import com.example.foodthought.repository.BookRepository;
-import com.example.foodthought.repository.CommentRepository;
-import com.example.foodthought.repository.LikeRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.example.foodthought.entity.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class BoardService {
-
-    private final BoardRepository boardRepository;
-    private final BookRepository bookRepository;
-    private final LikeRepository likeRepository;
-    private final CommentRepository commentRepository;
+public interface BoardService {
 
 
-    //게시물 생성
-    @Transactional
-    public ResponseDto<Void> createBoard(CreateBoardRequestDto create, User user) {
-        Book book = findBook(create.getBookId());
-        boardRepository.save(convertToBoard(create, user));
-        return ResponseDto.success(201);
-    }
+    /**
+     * 게시물 생성
+     *
+     * @param create 생성할 게시물 내용
+     * @param user   작성한 유저이름
+     * @return 성공시 true 반환, 실패시 exception
+     */
+    public ResponseDto<Boolean> createBoard(CreateBoardRequestDto create, User user);
 
 
-    //게시물 모두조회
-    public ResponseDto<List<GetBoardResponseDto>> getAllBoards(int page, int size, String sort, boolean isAsc) {
-        if (boardRepository.findAll().isEmpty()) {
-            throw new IllegalArgumentException("등록된 게시물이 없습니다.");
-        }
-        PageRequest pageRequest = PageRequest.of(page, size, !isAsc ? Sort.by(sort).descending() : Sort.by(sort).ascending());
-        Page<Board> boards = boardRepository.findAllByStatusNot(Status.Blocked, pageRequest);
-        return ResponseDto.success(200, convertToDtoList(boards));
-    }
+    /**
+     * 전체 게시물 조회
+     *
+     * @param page  default 0
+     * @param size  default 10
+     * @param sort  정렬기준(String)
+     * @param isAsc ASC, DESC
+     * @return List<GetBoardResponseDto>
+     */
+    public ResponseDto<List<GetBoardResponseDto>> getAllBoards(int page, int size, String sort, boolean isAsc);
 
 
-    //게시물 단건조회
-    public ResponseDto<GetBoardResponseDto> getBoard(Long boardId) {
-        Board board = findBoard(boardId);
-        return ResponseDto.success(200, convertToDto(board));
-    }
+    /**
+     * 단일 게시물 조회
+     *
+     * @param boardId 검색할 게시물 ID값
+     * @return GetBoardResponseDto
+     */
+    public ResponseDto<GetBoardResponseDto> getBoard(Long boardId);
 
 
-    //게시물 수정
-    @Transactional
-    public void updateBoard(Long boardId, UpdateBoardRequestDto updateBoardRequestDto, User user) {
-        Board board = findBoard(boardId);
-        if (!isMyBoard(board, user)) {
-            throw new IllegalArgumentException("게시물을 수정 할 수 있는 권한이 없습니다.");
-        }
-        board.update(updateBoardRequestDto, user);
-        boardRepository.save(board);
-    }
+    /**
+     * 게시물 수정
+     *
+     * @param boardId               수정할 게시물 ID
+     * @param updateBoardRequestDto 수정할 내용
+     * @param user                  삭제 할 유저
+     * @return 성공시 true 반환, 실패시 exception
+     */
+    public ResponseDto<Boolean> updateBoard(Long boardId, UpdateBoardRequestDto updateBoardRequestDto, User user);
 
 
-    //게시물 삭제
-    @Transactional
-    public void deleteBoard(Long boardId, User user) {
-        Board board = findBoard(boardId);
-        if (!isMyBoard(board, user)) {
-            throw new IllegalArgumentException("게시물을 삭제할 수 있는 권한이 없습니다.");
-        }
-        List<Like> deleteLike = likeRepository.findLikesByBoard_Id(boardId);
-        likeRepository.deleteAll(deleteLike);
-        List<Comment> deleteComment = commentRepository.findCommentsByBoard_Id(boardId);
-        commentRepository.deleteAll(deleteComment);
-        boardRepository.delete(board);
-    }
-
-    @Transactional
-    public void deleteAdminBoard(Long boardId) {
-        Board board = findBoard(boardId);
-        List<Like> deleteLike = likeRepository.findLikesByBoard_Id(boardId);
-        likeRepository.deleteAll(deleteLike);
-        List<Comment> deleteComment = commentRepository.findCommentsByBoard_Id(boardId);
-        commentRepository.deleteAll(deleteComment);
-        boardRepository.delete(board);
-    }
-
-    @Transactional
-    public void blockBoard(Long boardId) {
-        Board board = findBoard(boardId);
-        board.block();
-    }
+    /**
+     * 게시물 삭제
+     *
+     * @param boardId 삭제할 게시물 ID값
+     * @param user    삭제 할 유저
+     * @return 성공시 true 반환, 실패시 exception
+     */
+    public ResponseDto<Boolean> deleteBoard(Long boardId, User user);
 
 
-    public ResponseDto<List<GetBoardAdminResponseDto>> getAdminAllBoard(int page, int size, String sort, boolean isAsc) {
-        if (boardRepository.findAll().isEmpty()) {
-            throw new IllegalArgumentException("등록된 게시물이 없습니다.");
-        }
-        PageRequest pageRequest = PageRequest.of(page, size, !isAsc ? Sort.by(sort).descending() : Sort.by(sort).ascending());
-        Page<Board> boards = boardRepository.findAll(pageRequest);
-        return ResponseDto.success(200, adminConvertToDtoList(boards));
-    }
+    /**
+     * 관리자용 모든 게시물 검색
+     *
+     * @param page  default 0
+     * @param size  default 10
+     * @param sort  정렬기준(String)
+     * @param isAsc ASC, DESC
+     * @return List<GetBoardAdminResponseDto>
+     */
+    public ResponseDto<List<GetBoardAdminResponseDto>> getAdminAllBoard(int page, int size, String sort, boolean isAsc);
 
 
-    //게시물 찾기
-    private Board findBoard(Long boardId) {
-
-        return boardRepository.findById(boardId).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시물을 찾을 수 없습니다."));
-    }
-
-
-    private Book findBook(Long bookId) {
-        return bookRepository.findById(bookId).orElseThrow(
-                () -> new IllegalArgumentException("해당 도서를 찾을 수 없습니다."));
-    }
+    /**
+     * 관리자용 게시물 삭제
+     *
+     * @param boardId 삭제할 게시물 ID값
+     * @return 성공시 true, 실패는 Exception 으로 처리
+     */
+    public ResponseDto<Boolean> deleteAdminBoard(Long boardId);
 
 
-    //본인게시물인지 확인
-    private boolean isMyBoard(Board board, User user) {
-        return board.getUser().getId().equals(user.getId());
-    }
-
-
-    //Board -> GetBoardResponseDto
-    private GetBoardResponseDto convertToDto(Board board) {
-        Book book = findBook(board.getBookId());
-        return GetBoardResponseDto.builder()
-                .title(book.getTitle())
-                .author(book.getAuthor())
-                .publisher(book.getPublisher())
-                .image(book.getImage())
-                .category(book.getCategory())
-                .contents(board.getContents()).build();
-    }
-
-
-    //boards -> GetBoardResponseDtos
-    private List<GetBoardResponseDto> convertToDtoList(Page<Board> boards) {
-        List<GetBoardResponseDto> dtoList = new ArrayList<>();
-        for (Board board : boards) {
-            Book book = findBook(board.getBookId());
-            GetBoardResponseDto dto = GetBoardResponseDto.builder()
-                    .title(book.getTitle())
-                    .author(book.getAuthor())
-                    .publisher(book.getPublisher())
-                    .image(book.getImage())
-                    .category(book.getCategory())
-                    .contents(board.getContents()).build();
-            dtoList.add(dto);
-        }
-        return dtoList;
-    }
-
-    private List<GetBoardAdminResponseDto> adminConvertToDtoList(Page<Board> boards) {
-        List<GetBoardAdminResponseDto> dtoList = new ArrayList<>();
-        for (Board board : boards) {
-            Book book = findBook(board.getBookId());
-            GetBoardAdminResponseDto dto = GetBoardAdminResponseDto.builder()
-                    .title(book.getTitle())
-                    .author(book.getAuthor())
-                    .publisher(book.getPublisher())
-                    .image(book.getImage())
-                    .category(book.getCategory())
-                    .contents(board.getContents())
-                    .Status(String.valueOf(board.getStatus()))
-                    .build();
-            dtoList.add(dto);
-        }
-        return dtoList;
-    }
-
-
-    //book+user+dto -> board
-    private Board convertToBoard(CreateBoardRequestDto dto, User user) {
-        return Board.builder()
-                .bookId(dto.getBookId())
-                .user(user)
-                .contents(dto.getContents()).build();
-    }
+    /**
+     * 관리자용 게시물 상태변경 처리
+     *
+     * @param boardId 상태 변경할 게시물 ID값
+     * @return 성공시 true, 실패는 Exception 으로 처리
+     */
+    public ResponseDto<Boolean> updateStatusBoard(Long boardId, UpdateStatusRequestDto updateStatusRequestDto);
 }
