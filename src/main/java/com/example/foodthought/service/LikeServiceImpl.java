@@ -10,7 +10,6 @@ import com.example.foodthought.repository.BoardRepository;
 import com.example.foodthought.repository.BookRepository;
 import com.example.foodthought.repository.LikeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,10 +26,8 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     @Transactional
-    public void toggleLike(User user, Long boardId) {
-        Board board = boardRepository.findById(boardId).orElseThrow(() ->
-                new IllegalArgumentException("해당하는 게시물이 없습니다.")
-        );
+    public ResponseDto<Boolean> toggleLike(User user, Long boardId) {
+        Board board = findBoard(boardId);
         Like oldLike = findLike(board.getId(), user.getId());
         if (oldLike != null) {
             likeRepository.delete(oldLike);
@@ -38,6 +35,8 @@ public class LikeServiceImpl implements LikeService {
             Like like = toEntity(user, board);
             likeRepository.save(like);
         }
+        boolean success = true;
+        return ResponseDto.success(200, success);
     }
 
 
@@ -45,19 +44,24 @@ public class LikeServiceImpl implements LikeService {
     @Transactional(readOnly = true)
     public ResponseDto<List<LikeTopResponseDto>> findBoardByLikeTop3() {
         List<Object[]> top3 = likeRepository.findBoardByLikeTop3();
-
         List<LikeTopResponseDto> dtoList = new ArrayList<>();
         for (Object[] objects : top3) {
             Board board = (Board) objects[0];
             LikeTopResponseDto dto = buildLikeTop(board, (Long) objects[1]);
             dtoList.add(dto);
         }
-        return ResponseDto.success(HttpStatus.CREATED.value(), dtoList);
+        return ResponseDto.success(200, dtoList);
     }
 
 
     private Like findLike(Long boardId, Long userId) {
         return likeRepository.findLikesByBoard_IdAndUser_Id(boardId, userId);
+    }
+
+
+    private Board findBoard(Long boardId) {
+        return boardRepository.findById(boardId).orElseThrow(() ->
+                new IllegalArgumentException("해당하는 게시물이 없습니다."));
     }
 
 
