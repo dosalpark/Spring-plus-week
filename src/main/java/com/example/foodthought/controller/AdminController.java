@@ -1,6 +1,7 @@
 package com.example.foodthought.controller;
 
 import com.example.foodthought.common.dto.ResponseDto;
+import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.board.GetBoardResponseDto;
 import com.example.foodthought.dto.book.CreateBookRequestDto;
 import com.example.foodthought.dto.book.GetBookResponseDto;
@@ -58,7 +59,12 @@ public class AdminController {
     }
 
     @GetMapping("/api/boards")
-    public List<GetBoardResponseDto> getAdminAllBoard(int page, int size, String sort, boolean isAsc) {
+    public ResponseDto<List<GetBoardAdminResponseDto>> getAdminAllBoard(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createAt") String sort,
+            @RequestParam(defaultValue = "false") boolean isAsc
+    ) {
         return adminService.getAdminAllBoard(page, size, sort, isAsc);
     }
 

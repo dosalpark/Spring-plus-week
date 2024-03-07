@@ -1,7 +1,8 @@
 package com.example.foodthought.service;
 
+import com.example.foodthought.common.dto.ResponseDto;
 import com.example.foodthought.dto.admin.GetUsersResponseDto;
-import com.example.foodthought.dto.board.GetBoardResponseDto;
+import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.book.CreateBookRequestDto;
 import com.example.foodthought.dto.book.UpdateBookRequestDto;
 import com.example.foodthought.dto.comment.CommentResponse;
@@ -28,12 +29,25 @@ public class AdminService {
     public List<GetUsersResponseDto> findAllUser(){
          return userService.findAllUser()
                  .stream()
-                 .map(user -> new GetUsersResponseDto(user))
+                 .map(user -> GetUsersResponseDto.builder()
+                         .id(user.getId())
+                         .userId(user.getUserId())
+                         .username(user.getUsername())
+                         .intro(user.getIntro())
+                         .userPhoto(user.getUserPhoto())
+                         .build())
                  .toList();
     }
 
     public GetUsersResponseDto findUser(Long userId){
-        return new GetUsersResponseDto(userService.findUser(userId));
+        User user = userService.findUser(userId);
+        return GetUsersResponseDto.builder()
+                .id(user.getId())
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .intro(user.getIntro())
+                .userPhoto(user.getUserPhoto())
+                .build();
     }
 
     @Transactional
@@ -55,7 +69,7 @@ public class AdminService {
     }
 
 
-    public List<GetBoardResponseDto> getAdminAllBoard(int page, int size, String sort, boolean isAsc) {
+    public ResponseDto<List<GetBoardAdminResponseDto>> getAdminAllBoard(int page, int size, String sort, boolean isAsc) {
         return boardService.getAdminAllBoard(page, size, sort, isAsc);
     }
 

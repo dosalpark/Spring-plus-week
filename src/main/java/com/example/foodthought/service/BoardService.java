@@ -2,6 +2,7 @@ package com.example.foodthought.service;
 
 import com.example.foodthought.common.dto.ResponseDto;
 import com.example.foodthought.dto.board.CreateBoardRequestDto;
+import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.board.GetBoardResponseDto;
 import com.example.foodthought.dto.board.UpdateBoardRequestDto;
 import com.example.foodthought.entity.*;
@@ -44,7 +45,7 @@ public class BoardService {
             throw new IllegalArgumentException("등록된 게시물이 없습니다.");
         }
         PageRequest pageRequest = PageRequest.of(page, size, !isAsc ? Sort.by(sort).descending() : Sort.by(sort).ascending());
-        Page<Board> boards = boardRepository.findAll(pageRequest);
+        Page<Board> boards = boardRepository.findAllByStatusNot(Status.Blocked, pageRequest);
         return ResponseDto.success(200, convertToDtoList(boards));
     }
 
@@ -63,7 +64,6 @@ public class BoardService {
         if (!isMyBoard(board, user)) {
             throw new IllegalArgumentException("게시물을 수정 할 수 있는 권한이 없습니다.");
         }
-        Book book = findBook(updateBoardRequestDto.getBookId());
         board.update(updateBoardRequestDto, user);
         boardRepository.save(board);
     }
@@ -100,13 +100,13 @@ public class BoardService {
     }
 
 
-    public List<GetBoardResponseDto> getAdminAllBoard(int page, int size, String sort, boolean isAsc) {
+    public ResponseDto<List<GetBoardAdminResponseDto>> getAdminAllBoard(int page, int size, String sort, boolean isAsc) {
         if (boardRepository.findAll().isEmpty()) {
             throw new IllegalArgumentException("등록된 게시물이 없습니다.");
         }
         PageRequest pageRequest = PageRequest.of(page, size, !isAsc ? Sort.by(sort).descending() : Sort.by(sort).ascending());
         Page<Board> boards = boardRepository.findAll(pageRequest);
-        return adminConvertToDtoList(boards);
+        return ResponseDto.success(200, adminConvertToDtoList(boards));
     }
 
 
@@ -145,12 +145,9 @@ public class BoardService {
 
     //boards -> GetBoardResponseDtos
     private List<GetBoardResponseDto> convertToDtoList(Page<Board> boards) {
-        List<GetBoardResponseDto> getBoardResponseDtos = new ArrayList<>();
+        List<GetBoardResponseDto> dtoList = new ArrayList<>();
         for (Board board : boards) {
             Book book = findBook(board.getBookId());
-            if(board.getStatus() == Status.Blocked) {
-                throw new IllegalArgumentException("Block 된 게시물 입니다");
-            }
             GetBoardResponseDto dto = GetBoardResponseDto.builder()
                     .title(book.getTitle())
                     .author(book.getAuthor())
@@ -158,26 +155,27 @@ public class BoardService {
                     .image(book.getImage())
                     .category(book.getCategory())
                     .contents(board.getContents()).build();
-            getBoardResponseDtos.add(dto);
+            dtoList.add(dto);
         }
-        return getBoardResponseDtos;
+        return dtoList;
     }
 
-
-    private List<GetBoardResponseDto> adminConvertToDtoList(Page<Board> boards) {
-        List<GetBoardResponseDto> getBoardResponseDtos = new ArrayList<>();
+    private List<GetBoardAdminResponseDto> adminConvertToDtoList(Page<Board> boards) {
+        List<GetBoardAdminResponseDto> dtoList = new ArrayList<>();
         for (Board board : boards) {
             Book book = findBook(board.getBookId());
-            GetBoardResponseDto dto = GetBoardResponseDto.builder()
+            GetBoardAdminResponseDto dto = GetBoardAdminResponseDto.builder()
                     .title(book.getTitle())
                     .author(book.getAuthor())
                     .publisher(book.getPublisher())
                     .image(book.getImage())
                     .category(book.getCategory())
-                    .contents(board.getContents()).build();
-            getBoardResponseDtos.add(dto);
+                    .contents(board.getContents())
+                    .Status(String.valueOf(board.getStatus()))
+                    .build();
+            dtoList.add(dto);
         }
-        return getBoardResponseDtos;
+        return dtoList;
     }
 
 

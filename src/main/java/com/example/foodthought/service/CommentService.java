@@ -48,7 +48,7 @@ public class CommentService {
     // 댓글, 대댓글 조회
     public List<CommentResponse> getComment(Long boardId) {
         findBoard(boardId);
-        List<Comment> commentList = commentRepository.findByBoardId(boardId);
+        List<Comment> commentList = commentRepository.findByBoardIdAndParentCommentIsNull(boardId);
         return convertToDtoList(commentList);
     }
 
@@ -141,7 +141,7 @@ public class CommentService {
     // admin 댓글 조회 (block 된 게시물까지 전부 출력)
     public List<CommentResponse> getAllComment(Long boardId) {
         findBoard(boardId);
-        List<Comment> commentList = commentRepository.findByBoardId(boardId);
+        List<Comment> commentList = commentRepository.findByBoardIdAndParentCommentIsNull(boardId);
         return AdminConvertToDtoList(commentList);
     }
 
@@ -150,7 +150,12 @@ public class CommentService {
     private List<CommentResponse> AdminConvertToDtoList(List<Comment> commentList) {
         List<CommentResponse> commentResponseList = new ArrayList<>();
         for (Comment comment : commentList) {
-            CommentResponse commentResponse = new CommentResponse(comment);
+            CommentResponse commentResponse = CommentResponse.builder()
+                    .contents(comment.getContents())
+                    .userId(comment.getUser().getUserId())
+                    .createAt(comment.getCreateAt())
+                    .modifiedAt(comment.getModifiedAt())
+                    .build();
             addRepliesToResponse(comment, commentResponse);
             commentResponseList.add(commentResponse);
         }
@@ -161,8 +166,13 @@ public class CommentService {
     // Comment 객체를 CommentResponse 객체로 변환 후 리스트로 반환, block 게시물 block 처리
     private List<CommentResponse> convertToDtoList(List<Comment> commentList) {
         List<CommentResponse> commentResponseList = new ArrayList<>();
-        for (Comment comment : commentList) {
-            CommentResponse commentResponse = new CommentResponse(comment);
+        for (Comment comment : commentList) { //일반댓글중 하나꺼내고
+            CommentResponse commentResponse = CommentResponse.builder()
+                    .contents(comment.getContents())
+                    .userId(comment.getUser().getUserId())
+                    .createAt(comment.getCreateAt())
+                    .modifiedAt(comment.getModifiedAt())
+                    .build();
             if(comment.getStatus() == Status.Blocked) {
                 throw new IllegalArgumentException("Block 된 게시물 입니다");
             }
@@ -176,9 +186,14 @@ public class CommentService {
 
     private void addRepliesToResponse(Comment comment, CommentResponse commentResponse) {
         for (Comment reply : comment.getReplies()) {
-            CommentResponse replyResponse = new CommentResponse(reply);
+            CommentResponse replyResponse = CommentResponse.builder()
+                    .contents(reply.getContents())
+                    .userId(reply.getUser().getUserId())
+                    .createAt(reply.getCreateAt())
+                    .modifiedAt(reply.getModifiedAt())
+                    .build();
             commentResponse.addReply(replyResponse);
-            addRepliesToResponse(reply, replyResponse);
+//            addRepliesToResponse(reply, replyResponse); //
         }
     }
 

@@ -1,15 +1,11 @@
 package com.example.foodthought.entity;
 
 import com.example.foodthought.dto.board.UpdateBoardRequestDto;
-import com.example.foodthought.dto.book.UpdateBookRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Entity
@@ -18,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Board extends Timestamped{
+public class Board extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,6 +24,7 @@ public class Board extends Timestamped{
     private User user;
 
 
+    @Column(nullable = false)
     private Long bookId;
 
     @Enumerated(EnumType.STRING)
@@ -41,7 +38,7 @@ public class Board extends Timestamped{
     public void update(UpdateBoardRequestDto dto, User user) {
         this.user = user;
         this.bookId = dto.getBookId();
-        if(!dto.getContents().isEmpty()) this.contents = dto.getContents();
+        if (!dto.getContents().isEmpty()) this.contents = dto.getContents();
     }
 
     public void block() {
