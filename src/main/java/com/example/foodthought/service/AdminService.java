@@ -2,7 +2,7 @@ package com.example.foodthought.service;
 
 import com.example.foodthought.common.dto.ResponseDto;
 import com.example.foodthought.dto.admin.GetUsersResponseDto;
-import com.example.foodthought.dto.board.GetBoardResponseDto;
+import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.book.CreateBookRequestDto;
 import com.example.foodthought.dto.book.UpdateBookRequestDto;
 import com.example.foodthought.dto.comment.CommentResponse;
@@ -69,7 +69,7 @@ public class AdminService {
     }
 
 
-    public ResponseDto<List<GetBoardResponseDto>> getAdminAllBoard(int page, int size, String sort, boolean isAsc) {
+    public ResponseDto<List<GetBoardAdminResponseDto>> getAdminAllBoard(int page, int size, String sort, boolean isAsc) {
         return boardService.getAdminAllBoard(page, size, sort, isAsc);
     }
 

@@ -6,12 +6,13 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class GetBoardResponseDto {
+public class GetBoardAdminResponseDto {
     private String title;
     private String author;
     private String publisher;
     private String image;
     private String category;
     private String contents;
+    private String Status;
 }
 

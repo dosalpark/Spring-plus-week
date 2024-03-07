@@ -33,9 +33,9 @@ public class BoardController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createAt") String sort,
-            @RequestParam(defaultValue = "false") boolean isASC
+            @RequestParam(defaultValue = "false") boolean isAsc
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(boardService.getAllBoards(page, size, sort, isASC));
+        return ResponseEntity.status(HttpStatus.OK).body(boardService.getAllBoards(page, size, sort, isAsc));
     }
 
 
