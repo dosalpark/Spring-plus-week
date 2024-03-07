@@ -6,7 +6,7 @@ import com.example.foodthought.dto.admin.UpdateStatusRequestDto;
 import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.book.CreateBookRequestDto;
 import com.example.foodthought.dto.book.UpdateBookRequestDto;
-import com.example.foodthought.dto.comment.CommentResponse;
+import com.example.foodthought.dto.comment.CommentAdminResponseDto;
 import com.example.foodthought.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,20 +27,20 @@ public class AdminService {
     private final PasswordEncoder passwordEncoder;
 
     //user
-    public List<GetUsersResponseDto> findAllUser(){
-         return userService.findAllUser()
-                 .stream()
-                 .map(user -> GetUsersResponseDto.builder()
-                         .id(user.getId())
-                         .userId(user.getUserId())
-                         .username(user.getUsername())
-                         .intro(user.getIntro())
-                         .userPhoto(user.getUserPhoto())
-                         .build())
-                 .toList();
+    public List<GetUsersResponseDto> findAllUser() {
+        return userService.findAllUser()
+                .stream()
+                .map(user -> GetUsersResponseDto.builder()
+                        .id(user.getId())
+                        .userId(user.getUserId())
+                        .username(user.getUsername())
+                        .intro(user.getIntro())
+                        .userPhoto(user.getUserPhoto())
+                        .build())
+                .toList();
     }
 
-    public GetUsersResponseDto findUser(Long userId){
+    public GetUsersResponseDto findUser(Long userId) {
         User user = userService.findUser(userId);
         return GetUsersResponseDto.builder()
                 .id(user.getId())
@@ -52,7 +52,7 @@ public class AdminService {
     }
 
     @Transactional
-    public void deleteUser(Long userId){
+    public void deleteUser(Long userId) {
         userService.deleteUser(userId);
     }
 
@@ -77,19 +77,19 @@ public class AdminService {
 
     //comment
     @Transactional
-    public void deleteAdminComment(Long boardId, Long commentId, User user) {
-        commentService.deleteAdminComment(boardId, commentId, user);
+    public ResponseDto<Boolean> deleteAdminComment(Long boardId, Long commentId) {
+        return commentService.deleteAdminComment(boardId, commentId);
     }
 
 
     @Transactional
-    public void blockComment(Long boardId, Long commentId, User user) {
-        commentService.blockComment(boardId, commentId, user);
+    public ResponseDto<Boolean> updateStatusComment(Long boardId, Long commentId, UpdateStatusRequestDto updateStatusRequestDto) {
+        return commentService.updateStatusComment(boardId, commentId, updateStatusRequestDto);
     }
 
 
-    public List<CommentResponse> getAllComment(Long boardId) {
-        return commentService.getAllComment(boardId);
+    public ResponseDto<List<CommentAdminResponseDto>> getAdminComment(Long boardId, int page, int size, String sort, boolean isAsc) {
+        return commentService.getAdminComment(boardId, page, size, sort, isAsc);
     }
 
 

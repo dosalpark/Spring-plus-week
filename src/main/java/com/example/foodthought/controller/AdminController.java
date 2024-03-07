@@ -5,7 +5,7 @@ import com.example.foodthought.dto.admin.UpdateStatusRequestDto;
 import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.book.CreateBookRequestDto;
 import com.example.foodthought.dto.book.UpdateBookRequestDto;
-import com.example.foodthought.dto.comment.CommentResponse;
+import com.example.foodthought.dto.comment.CommentAdminResponseDto;
 import com.example.foodthought.security.UserDetailsImpl;
 import com.example.foodthought.service.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -68,32 +68,36 @@ public class AdminController {
 
 
     //comment
-    @PutMapping("/api/boards/{boardId}/comments/{commentId}/block")
-    public ResponseEntity blockComment(
+    @PutMapping("/api/boards/{boardId}/comments/{commentId}/status")
+    public ResponseEntity<ResponseDto<Boolean>> updateStatusComment(
             @PathVariable Long boardId,
             @PathVariable Long commentId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @RequestBody UpdateStatusRequestDto updateStatusRequestDto
     ) {
-        adminService.blockComment(boardId, commentId, userDetails.getUser());
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.updateStatusComment(boardId, commentId, updateStatusRequestDto));
     }
 
 
     @DeleteMapping("/api/boards/{boardId}/comments/{commentId}")
-    public ResponseEntity<String> deleteAdminComment(
+    public ResponseEntity<ResponseDto<Boolean>> deleteAdminComment(
             @PathVariable Long boardId,
             @PathVariable Long commentId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        adminService.deleteAdminComment(boardId, commentId, userDetails.getUser());
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.deleteAdminComment(boardId, commentId));
     }
 
 
     @GetMapping("/api/boards/{boardId}/comments")
-    public List<CommentResponse> getAllAdminComment(
-            @PathVariable Long boardId) {
-        return adminService.getAllComment(boardId);
+    public ResponseEntity<ResponseDto<List<CommentAdminResponseDto>>> getAdminComment(
+            @PathVariable Long boardId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size,
+            @RequestParam(defaultValue = "createAt") String sort,
+            @RequestParam(defaultValue = "true") boolean isAsc
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.getAdminComment(boardId, page, size, sort, isAsc));
     }
 
     //book

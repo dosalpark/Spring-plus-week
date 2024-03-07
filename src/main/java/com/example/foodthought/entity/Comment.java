@@ -1,6 +1,7 @@
 package com.example.foodthought.entity;
 
-import com.example.foodthought.dto.comment.CommentRequest;
+import com.example.foodthought.dto.admin.UpdateStatusRequestDto;
+import com.example.foodthought.dto.comment.UpdateCommentRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,9 +25,11 @@ public class Comment extends Timestamped {
     @Lob
     private String contents;
 
+
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Status status = Status.POST;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_Id", nullable = false)
@@ -37,24 +40,30 @@ public class Comment extends Timestamped {
     @JoinColumn(name = "board_Id", nullable = false)
     private Board board;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_comment_Id")
     private Comment parentComment;
 
+
     @OneToMany(mappedBy = "parentComment", fetch = FetchType.LAZY)
     private List<Comment> replies;
 
-    public Comment(CommentRequest request, Board board, User user) {
+
+    public Comment(UpdateCommentRequest request, Board board, User user) {
         this.contents = request.getContents();
         this.board = board;
         this.user = user;
     }
 
-    public void block() {
-        this.status = Status.BLOCKED;
+
+    public void updateStatusComment(UpdateStatusRequestDto updateStatusRequestDto) {
+        String upperStatus = (updateStatusRequestDto.getStatus()).toUpperCase();
+        this.status = Status.valueOf(upperStatus);
     }
 
-    public void updateComment(CommentRequest commentRequest) {
-        this.contents = commentRequest.getContents();
+
+    public void updateComment(UpdateCommentRequest updateCommentRequest) {
+        this.contents = updateCommentRequest.getContents();
     }
 }
