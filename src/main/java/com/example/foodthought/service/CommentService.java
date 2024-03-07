@@ -150,7 +150,12 @@ public class CommentService {
     private List<CommentResponse> AdminConvertToDtoList(List<Comment> commentList) {
         List<CommentResponse> commentResponseList = new ArrayList<>();
         for (Comment comment : commentList) {
-            CommentResponse commentResponse = new CommentResponse(comment); //여기여기
+            CommentResponse commentResponse = CommentResponse.builder()
+                    .contents(comment.getContents())
+                    .userId(comment.getUser().getUserId())
+                    .createAt(comment.getCreateAt())
+                    .modifiedAt(comment.getModifiedAt())
+                    .build();
             addRepliesToResponse(comment, commentResponse);
             commentResponseList.add(commentResponse);
         }
@@ -162,7 +167,12 @@ public class CommentService {
     private List<CommentResponse> convertToDtoList(List<Comment> commentList) {
         List<CommentResponse> commentResponseList = new ArrayList<>();
         for (Comment comment : commentList) { //일반댓글중 하나꺼내고
-            CommentResponse commentResponse = new CommentResponse(comment);
+            CommentResponse commentResponse = CommentResponse.builder()
+                    .contents(comment.getContents())
+                    .userId(comment.getUser().getUserId())
+                    .createAt(comment.getCreateAt())
+                    .modifiedAt(comment.getModifiedAt())
+                    .build();
             if(comment.getStatus() == Status.Blocked) {
                 throw new IllegalArgumentException("Block 된 게시물 입니다");
             }
@@ -176,7 +186,12 @@ public class CommentService {
 
     private void addRepliesToResponse(Comment comment, CommentResponse commentResponse) {
         for (Comment reply : comment.getReplies()) {
-            CommentResponse replyResponse = new CommentResponse(reply);
+            CommentResponse replyResponse = CommentResponse.builder()
+                    .contents(reply.getContents())
+                    .userId(reply.getUser().getUserId())
+                    .createAt(reply.getCreateAt())
+                    .modifiedAt(reply.getModifiedAt())
+                    .build();
             commentResponse.addReply(replyResponse);
 //            addRepliesToResponse(reply, replyResponse); //
         }
@@ -205,6 +220,4 @@ public class CommentService {
     private Comment findReply(Long replyId) {
         return commentRepository.findById(replyId).orElseThrow(() -> new IllegalArgumentException("없는 대댓글입니다."));
     }
-
-//    private Comment convertToComment()
 }
