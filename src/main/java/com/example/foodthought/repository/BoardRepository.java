@@ -11,9 +11,14 @@ import java.util.List;
 
 
 public interface BoardRepository extends JpaRepository<Board, Long>, PagingAndSortingRepository<Board, Long> {
-    Page<Board> findAll(Pageable pageable);
-    Page<Board> findAllByStatusNot(Status status, Pageable pageable);
     List<Board> findAll();
+
+    List<Board> findAllByStatus(Status status);
+
+    Page<Board> findAll(Pageable pageable);
+
+    Page<Board> findAllByStatusNot(Status status, Pageable pageable);
+
 
 }
 

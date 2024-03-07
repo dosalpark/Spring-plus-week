@@ -21,8 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.foodthought.entity.Status.BLOCKED;
-import static com.example.foodthought.entity.Status.NOTICE;
+import static com.example.foodthought.entity.Status.*;
 
 @Service
 @RequiredArgsConstructor
@@ -91,7 +90,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<List<GetBoardAdminResponseDto>> getAdminAllBoard(int page, int size, String sort, boolean isAsc) {
-        findAllBoard();
+        findAllAdminBoard();
         PageRequest pageRequest = PageRequest.of(page, size, !isAsc ? Sort.by(sort).descending() : Sort.by(sort).ascending());
         Page<Board> boards = boardRepository.findAll(pageRequest);
         return ResponseDto.success(200, adminConvertToDtoList(boards));
@@ -121,6 +120,13 @@ public class BoardServiceImpl implements BoardService {
 
 
     private void findAllBoard() {
+        if (boardRepository.findAllByStatus(POST).isEmpty()) {
+            throw new IllegalArgumentException("등록된 게시물이 없습니다.");
+        }
+    }
+
+
+    private void findAllAdminBoard() {
         if (boardRepository.findAll().isEmpty()) {
             throw new IllegalArgumentException("등록된 게시물이 없습니다.");
         }
