@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Getter
@@ -33,6 +32,7 @@ public class Book extends Timestamped{
 
     @Column(nullable = false, length = 255)
     private String category;
+
 
     public void update(UpdateBookRequestDto dto, String image) {
         if(!dto.getTitle().isEmpty())   this.title = dto.getTitle();
