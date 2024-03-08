@@ -1,0 +1,285 @@
+package com.example.foodthought.service;
+
+import com.example.foodthought.common.dto.ResponseDto;
+import com.example.foodthought.dto.admin.UpdateStatusRequestDto;
+import com.example.foodthought.dto.comment.CommentAdminResponseDto;
+import com.example.foodthought.dto.comment.CommentResponseDto;
+import com.example.foodthought.dto.comment.CreateCommentRequestDto;
+import com.example.foodthought.dto.comment.UpdateCommentRequest;
+import com.example.foodthought.entity.Board;
+import com.example.foodthought.entity.Comment;
+import com.example.foodthought.entity.Status;
+import com.example.foodthought.entity.User;
+import com.example.foodthought.repository.BoardRepository;
+import com.example.foodthought.repository.CommentRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
+import static com.example.foodthought.entity.Status.BLOCKED;
+import static com.example.foodthought.entity.Status.NOTICE;
+
+@Service
+@RequiredArgsConstructor
+public class CommentServiceImpl implements CommentService {
+
+
+    private final CommentRepository commentRepository;
+    private final BoardRepository boardRepository;
+
+
+    @Override
+    @Transactional
+    public ResponseDto<Boolean> createParentComment(Long boardId, CreateCommentRequestDto createCommentRequestDto, User user) {
+        Board board = findBoard(boardId);
+        commentRepository.save(toParentEntity(board, createCommentRequestDto.getContents(), user));
+        boolean success = true;
+        return ResponseDto.success(201, success);
+    }
+
+
+    @Override
+    @Transactional
+    public ResponseDto<Boolean> createChildComment(Long boardId, Long parentCommentId, CreateCommentRequestDto createCommentRequestDto, User user) {
+        Board board = findBoard(boardId);
+        Comment parentComment = findParentComment(parentCommentId);
+        commentRepository.save(toChildEntity(board, createCommentRequestDto.getContents(), parentComment, user));
+        boolean success = true;
+        return ResponseDto.success(201, success);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseDto<List<CommentResponseDto>> getComment(Long boardId, int page, int size, String sort, boolean isAsc) {
+        findBoard(boardId);
+        findAllComment(boardId);
+        PageRequest pageRequest = PageRequest.of(page, size, isAsc ? Sort.by(sort).ascending() : Sort.by(sort).descending());
+        Page<Comment> commentList = commentRepository.findByBoardIdAndParentCommentIsNullAndStatusNotIn(boardId, Arrays.asList(Status.NOTICE, Status.BLOCKED), pageRequest);
+        return ResponseDto.success(200, convertToDtoList(commentList));
+    }
+
+
+    @Override
+    @Transactional
+    public ResponseDto<Boolean> updateComment(Long boardId, Long commentId, UpdateCommentRequest updateCommentRequest, User user) {
+        findBoard(boardId);
+        Comment comment = findComment(commentId);
+        checkOwnerAndStatus(comment, user);
+        comment.updateComment(updateCommentRequest);
+        boolean success = true;
+        return ResponseDto.success(200, success);
+    }
+
+
+    @Override
+    @Transactional
+    public ResponseDto<Boolean> updateReply(Long boardId, Long parentCommentId, Long replyId, UpdateCommentRequest updateCommentRequest, User user) {
+        findBoard(boardId);
+        findComment(parentCommentId);
+        Comment reply = findComment(replyId);
+        checkOwnerAndStatus(reply, user);
+        reply.updateComment(updateCommentRequest);
+        boolean success = true;
+        return ResponseDto.success(200, success);
+    }
+
+
+    @Override
+    @Transactional
+    public ResponseDto<Boolean> deleteComment(Long boardId, Long commentId, User user) {
+        findBoard(boardId);
+        Comment comment = findComment(commentId);
+        checkOwnerAndStatus(comment, user);
+        commentRepository.deleteAll(deleteRelatedChildComment(commentId));
+        commentRepository.delete(comment);
+        boolean success = true;
+        return ResponseDto.success(200, success);
+    }
+
+
+    @Override
+    @Transactional
+    public ResponseDto<Boolean> deleteReply(Long boardId, Long parentCommentId, Long replyId, User user) {
+        findBoard(boardId);
+        findComment(parentCommentId);
+        Comment reply = findComment(replyId);
+        checkOwnerAndStatus(reply, user);
+        commentRepository.delete(reply);
+        boolean success = true;
+        return ResponseDto.success(200, success);
+
+    }
+
+
+    @Override
+    @Transactional
+    public ResponseDto<Boolean> updateStatusComment(Long boardId, Long commentId, UpdateStatusRequestDto updateStatusRequestDto) {
+        findBoard(boardId);
+        Comment comment = findComment(commentId);
+        comment.updateStatusComment(updateStatusRequestDto);
+        boolean success = true;
+        return ResponseDto.success(200, success);
+    }
+
+
+    @Override
+    @Transactional
+    public ResponseDto<Boolean> deleteAdminComment(Long boardId, Long commentId) {
+        findBoard(boardId);
+        Comment comment = findComment(commentId);
+        commentRepository.deleteAll(deleteRelatedChildComment(commentId));
+        commentRepository.delete(comment);
+        boolean success = true;
+        return ResponseDto.success(200, success);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseDto<List<CommentAdminResponseDto>> getAdminComment(Long boardId, int page, int size, String sort, boolean isAsc) {
+        findBoard(boardId);
+        findAllAdminComment(boardId);
+        PageRequest pageRequest = PageRequest.of(page, size, isAsc ? Sort.by(sort).ascending() : Sort.by(sort).descending());
+        Page<Comment> commentList = commentRepository.findByBoardIdAndParentCommentIsNull(boardId, pageRequest);
+        return ResponseDto.success(200, adminConvertToDtoList(commentList));
+    }
+
+
+    private Comment toParentEntity(Board board, String contents, User user) {
+        return Comment.builder()
+                .contents(contents)
+                .board(board)
+                .user(user)
+                .build();
+    }
+
+
+    private Comment toChildEntity(Board board, String contents, Comment parentComment, User user) {
+        return Comment.builder()
+                .contents(contents)
+                .board(board)
+                .user(user)
+                .parentComment(parentComment)
+                .build();
+    }
+
+
+    private void checkOwnerAndStatus(Comment comment, User user) {
+        if (!comment.getUser().getId().equals(user.getId()) ||
+                comment.getStatus().equals(BLOCKED) ||
+                comment.getStatus().equals(NOTICE)) {
+            throw new IllegalArgumentException("게시물에 대한 권한이 없습니다");
+        }
+    }
+
+
+    private Comment findComment(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(
+                () -> new IllegalArgumentException("없는 댓글 입니다."));
+    }
+
+
+    private Comment findParentComment(Long parentCommentId) {
+        Comment parentComment = commentRepository.findById(parentCommentId).orElseThrow(
+                () -> new IllegalArgumentException("없는 댓글 입니다."));
+        if (!Objects.isNull(parentComment.getParentComment())) {
+            throw new IllegalArgumentException("대댓글에는 댓글을 달 수 없습니다.");
+        }
+        return parentComment;
+    }
+
+
+    private Board findBoard(Long boardId) {
+        return boardRepository.findById(boardId).orElseThrow(
+                () -> new IllegalArgumentException("없는 게시글입니다."));
+    }
+
+
+    private List<Comment> deleteRelatedChildComment(Long parentCommentId) {
+        return commentRepository.findCommentsByParentComment_CommentId(parentCommentId);
+    }
+
+
+    private void findAllComment(Long boardId) {
+        if (commentRepository.findByBoardIdAndStatusNotIn(boardId, Arrays.asList(Status.NOTICE, Status.BLOCKED)).isEmpty()) {
+            throw new IllegalArgumentException("등록된 게시물이 없습니다.");
+        }
+    }
+
+
+    private void findAllAdminComment(Long boardId) {
+        if (commentRepository.findByBoardId(boardId).isEmpty()) {
+            throw new IllegalArgumentException("등록된 게시물이 없습니다.");
+        }
+    }
+
+
+    private List<CommentResponseDto> convertToDtoList(Page<Comment> commentList) {
+        List<CommentResponseDto> dtoList = new ArrayList<>();
+        for (Comment comment : commentList) {
+            CommentResponseDto dto = CommentResponseDto.builder()
+                    .contents(comment.getContents())
+                    .userId(comment.getUser().getUserId())
+                    .createAt(comment.getCreateAt())
+                    .modifiedAt(comment.getModifiedAt())
+                    .build();
+            addRepliesToResponse(comment, dto);
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
+
+
+    private void addRepliesToResponse(Comment comment, CommentResponseDto commentResponseDto) {
+        for (Comment reply : comment.getReplies()) {
+            CommentResponseDto replyResponse = CommentResponseDto.builder()
+                    .contents(reply.getContents())
+                    .userId(reply.getUser().getUserId())
+                    .createAt(reply.getCreateAt())
+                    .modifiedAt(reply.getModifiedAt())
+                    .build();
+            commentResponseDto.addReply(replyResponse);
+
+        }
+    }
+
+
+    private List<CommentAdminResponseDto> adminConvertToDtoList(Page<Comment> commentList) {
+        List<CommentAdminResponseDto> dtoList = new ArrayList<>();
+        for (Comment comment : commentList) {
+            CommentAdminResponseDto dto = CommentAdminResponseDto.builder()
+                    .contents(comment.getContents())
+                    .userId(comment.getUser().getUserId())
+                    .createAt(comment.getCreateAt())
+                    .modifiedAt(comment.getModifiedAt())
+                    .status(comment.getStatus())
+                    .build();
+            addAdminRepliesToResponse(comment, dto);
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
+
+
+    private void addAdminRepliesToResponse(Comment comment, CommentAdminResponseDto commentAdminResponseDto) {
+        for (Comment reply : comment.getReplies()) {
+            CommentAdminResponseDto dto = CommentAdminResponseDto.builder()
+                    .contents(reply.getContents())
+                    .userId(reply.getUser().getUserId())
+                    .createAt(reply.getCreateAt())
+                    .modifiedAt(reply.getModifiedAt())
+                    .status(reply.getStatus())
+                    .build();
+            commentAdminResponseDto.addReply(dto);
+        }
+    }
+}

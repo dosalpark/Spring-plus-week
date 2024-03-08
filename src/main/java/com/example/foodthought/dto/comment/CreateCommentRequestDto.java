@@ -3,7 +3,6 @@ package com.example.foodthought.dto.comment;
 import lombok.Getter;
 
 @Getter
-public class CreatCommentRequest {
-    private Long parentCommentId;
+public class CreateCommentRequestDto {
     private String contents;
 }

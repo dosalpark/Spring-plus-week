@@ -1,6 +1,7 @@
 package com.example.foodthought.controller;
 
 import com.example.foodthought.common.dto.ResponseDto;
+import com.example.foodthought.dto.admin.GetUsersResponseDto;
 import com.example.foodthought.dto.user.CreateUserDto;
 import com.example.foodthought.dto.user.UpdateUserDto;
 import com.example.foodthought.security.UserDetailsImpl;
@@ -18,23 +19,29 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
     @PostMapping(value = "/signup",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> signUp(
+    public ResponseEntity<ResponseDto<Boolean>> signUp(
             @RequestPart @Valid CreateUserDto createUserDto,
             @RequestPart(value = "userPhoto",required = false) MultipartFile file
     ) throws IOException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(createUserDto,file));
+        return ResponseEntity.status(201).body(userService.createUser(createUserDto,file));
     }
 
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<ResponseDto<GetUsersResponseDto>> getUser(@PathVariable Long userId) {
+        return ResponseEntity.status(200).body(userService.findOneUser(userId));
+    }
+
+
     @PutMapping("/{userId}")
-    public ResponseEntity updateUser(@PathVariable Long userId,
+    public ResponseEntity<ResponseDto<Boolean>> updateUser(@PathVariable Long userId,
                                      @RequestPart @Valid UpdateUserDto updateUserDto,
                                      @RequestPart(value = "userPhoto",required = false) MultipartFile file,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        userService.updateUser(userId,updateUserDto,file,userDetails.getUser());
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(200).body(userService.updateUser(userId,updateUserDto,file,userDetails.getUser()));
     }
 }

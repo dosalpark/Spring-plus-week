@@ -32,13 +32,13 @@ public class BookController {
             @RequestParam(defaultValue = "false") boolean isASC,
             @RequestParam(required = false, defaultValue = "") String title //
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(bookService.getAllBook(page, size, sort, isASC, title));
+        return ResponseEntity.status(200).body(bookService.getAllBook(page, size, sort, isASC, title));
     }
 
 
     //책 단권조회
     @GetMapping("/{bookId}")
     public ResponseEntity<ResponseDto<GetBookResponseDto>> getBook(@PathVariable Long bookId) {
-        return ResponseEntity.status(HttpStatus.OK).body(bookService.getBook(bookId));
+        return ResponseEntity.status(200).body(bookService.getBook(bookId));
     }
 }

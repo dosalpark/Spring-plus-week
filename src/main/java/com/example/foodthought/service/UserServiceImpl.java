@@ -1,0 +1,120 @@
+package com.example.foodthought.service;
+
+import com.example.foodthought.common.dto.ResponseDto;
+import com.example.foodthought.dto.admin.GetUsersResponseDto;
+import com.example.foodthought.dto.user.CreateUserDto;
+import com.example.foodthought.dto.user.UpdateUserDto;
+import com.example.foodthought.entity.User;
+import com.example.foodthought.repository.UserRepository;
+import com.example.foodthought.util.StorageService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
+@RequiredArgsConstructor
+@Service
+public class UserServiceImpl implements UserService {
+
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final StorageService storageService;
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseDto<GetUsersResponseDto> findOneUser(Long userId) {
+        User user = findUser(userId);
+        GetUsersResponseDto dto = GetUsersResponseDto.builder()
+                .id(user.getId())
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .intro(user.getIntro())
+                .userPhoto(user.getUserPhoto())
+                .build();
+        return ResponseDto.success(200, dto);
+    }
+
+
+    @Override
+    @Transactional
+    public ResponseDto<Boolean> createUser(CreateUserDto createUserDto, MultipartFile file) throws IOException {
+        Optional<User> sameUser = userRepository.findByUserId(createUserDto.getUserId());
+
+        if (sameUser.isPresent()) {
+            throw new IllegalArgumentException("이미 존재하는 회원입니다");
+        }
+
+        String passwordEncryption = passwordEncoder.encode(createUserDto.getPassword());
+        User user = new User(createUserDto, passwordEncryption, convertToString(file));
+        userRepository.save(user);
+
+        return ResponseDto.success(201, true);
+    }
+
+
+    @Override
+    @Transactional
+    public ResponseDto<Boolean> updateUser(Long userId, UpdateUserDto updateUserDto, MultipartFile file, User user) throws IOException {
+        User updateUser = findUser(userId);
+        verifyIdentity(updateUser.getId(), user.getId());
+        updateUser.update(updateUserDto, convertToString(file));
+        return ResponseDto.success(200, true);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseDto<List<GetUsersResponseDto>> findAllUser() {
+        return ResponseDto.success(200, convertToDtoList());
+    }
+
+
+    @Override
+    @Transactional
+    public ResponseDto<Boolean> deleteUser(Long userId) {
+        userRepository.delete(findUser(userId));
+        return ResponseDto.success(200, true);
+    }
+
+
+    private List<GetUsersResponseDto> convertToDtoList() {
+        return userRepository.findAll()
+                .stream()
+                .map(user -> GetUsersResponseDto.builder()
+                        .id(user.getId())
+                        .userId(user.getUserId())
+                        .username(user.getUsername())
+                        .intro(user.getIntro())
+                        .userPhoto(user.getUserPhoto())
+                        .build())
+                .toList();
+    }
+
+
+    private User findUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재 하지 않은 유저입니다"));
+    }
+
+
+    private void verifyIdentity(Long updateUserId, Long loginUserId) {
+        if (!updateUserId.equals(loginUserId)) {
+            throw new IllegalArgumentException("회원 수정은 본인만 가능합니다");
+        }
+    }
+
+
+    private String convertToString(MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            throw new IOException("이미지를 업로드 해주세요");
+        }
+        return storageService.uploadFile(file);
+    }
+}

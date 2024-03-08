@@ -2,13 +2,12 @@ package com.example.foodthought.service;
 
 import com.example.foodthought.common.dto.ResponseDto;
 import com.example.foodthought.dto.admin.GetUsersResponseDto;
+import com.example.foodthought.dto.admin.UpdateStatusRequestDto;
 import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.book.CreateBookRequestDto;
 import com.example.foodthought.dto.book.UpdateBookRequestDto;
-import com.example.foodthought.dto.comment.CommentResponse;
-import com.example.foodthought.entity.User;
+import com.example.foodthought.dto.comment.CommentAdminResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,53 +18,34 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AdminService {
+
+
     private final UserService userService;
     private final BoardService boardService;
     private final CommentService commentService;
     private final BookService bookService;
-    private final PasswordEncoder passwordEncoder;
+
 
     //user
-    public List<GetUsersResponseDto> findAllUser(){
-         return userService.findAllUser()
-                 .stream()
-                 .map(user -> GetUsersResponseDto.builder()
-                         .id(user.getId())
-                         .userId(user.getUserId())
-                         .username(user.getUsername())
-                         .intro(user.getIntro())
-                         .userPhoto(user.getUserPhoto())
-                         .build())
-                 .toList();
+    public ResponseDto<List<GetUsersResponseDto>> findAllUser() {
+        return userService.findAllUser();
     }
 
-    public GetUsersResponseDto findUser(Long userId){
-        User user = userService.findUser(userId);
-        return GetUsersResponseDto.builder()
-                .id(user.getId())
-                .userId(user.getUserId())
-                .username(user.getUsername())
-                .intro(user.getIntro())
-                .userPhoto(user.getUserPhoto())
-                .build();
-    }
 
     @Transactional
-    public void deleteUser(Long userId){
-        userService.deleteUser(userId);
+    public ResponseDto<Boolean> deleteUser(Long userId) {
+        return userService.deleteUser(userId);
     }
 
 
     //board
-    @Transactional
-    public void deleteAdminBoard(Long boardId) {
-        boardService.deleteAdminBoard(boardId);
+    public ResponseDto<Boolean> deleteAdminBoard(Long boardId) {
+        return boardService.deleteAdminBoard(boardId);
     }
 
 
-    @Transactional
-    public void blockBoard(Long boardId) {
-        boardService.blockBoard(boardId);
+    public ResponseDto<Boolean> updateStatusBoard(Long boardId, UpdateStatusRequestDto updateStatusRequestDto) {
+        return boardService.updateStatusBoard(boardId, updateStatusRequestDto);
     }
 
 
@@ -75,36 +55,34 @@ public class AdminService {
 
 
     //comment
-    @Transactional
-    public void deleteAdminComment(Long boardId, Long commentId, User user) {
-        commentService.deleteAdminComment(boardId, commentId, user);
+    public ResponseDto<Boolean> deleteAdminComment(Long boardId, Long commentId) {
+        return commentService.deleteAdminComment(boardId, commentId);
     }
 
 
-    @Transactional
-    public void blockComment(Long boardId, Long commentId, User user) {
-        commentService.blockComment(boardId, commentId, user);
+    public ResponseDto<Boolean> updateStatusComment(Long boardId, Long commentId, UpdateStatusRequestDto updateStatusRequestDto) {
+        return commentService.updateStatusComment(boardId, commentId, updateStatusRequestDto);
     }
 
 
-    public List<CommentResponse> getAllComment(Long boardId) {
-        return commentService.getAllComment(boardId);
+    public ResponseDto<List<CommentAdminResponseDto>> getAdminComment(Long boardId, int page, int size, String sort, boolean isAsc) {
+        return commentService.getAdminComment(boardId, page, size, sort, isAsc);
     }
 
 
     // book
-    public void createBook(CreateBookRequestDto createBookRequestDto, MultipartFile file) throws IOException {
-        bookService.createBook(createBookRequestDto, file);
+    public ResponseDto<Boolean> createBook(CreateBookRequestDto createBookRequestDto, MultipartFile file) throws IOException {
+        return bookService.createBook(createBookRequestDto, file);
     }
 
 
-    public void updateBook(Long bookId, UpdateBookRequestDto updateBookRequestDto, MultipartFile file) throws IOException {
-        bookService.updateBook(bookId, updateBookRequestDto, file);
+    public ResponseDto<Boolean> updateBook(Long bookId, UpdateBookRequestDto updateBookRequestDto, MultipartFile file) throws IOException {
+        return bookService.updateBook(bookId, updateBookRequestDto, file);
     }
 
 
-    public void deleteBook(Long bookId) {
-        bookService.deleteBook(bookId);
+    public ResponseDto<Boolean> deleteBook(Long bookId) {
+        return bookService.deleteBook(bookId);
     }
 
 }

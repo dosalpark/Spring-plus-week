@@ -1,5 +1,6 @@
 package com.example.foodthought.entity;
 
+import com.example.foodthought.dto.admin.UpdateStatusRequestDto;
 import com.example.foodthought.dto.board.UpdateBoardRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,7 @@ public class Board extends Timestamped {
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private Status status = Status.Post;
+    private Status status = Status.POST;
 
 
     @Column(nullable = false, length = 65535)
@@ -41,8 +42,9 @@ public class Board extends Timestamped {
         if (!dto.getContents().isEmpty()) this.contents = dto.getContents();
     }
 
-    public void block() {
-        this.status = Status.Blocked;
+    public void updateStatusBoard(UpdateStatusRequestDto updateStatusRequestDto) {
+        String upperStatus = (updateStatusRequestDto.getStatus()).toUpperCase();
+        this.status = Status.valueOf(upperStatus);
     }
 
 }

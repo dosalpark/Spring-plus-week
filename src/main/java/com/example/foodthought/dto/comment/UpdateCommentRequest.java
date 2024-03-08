@@ -3,6 +3,6 @@ package com.example.foodthought.dto.comment;
 import lombok.Getter;
 
 @Getter
-public class CommentRequest {
+public class UpdateCommentRequest {
     private String contents;
 }

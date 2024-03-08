@@ -48,7 +48,7 @@ public class User extends Timestamped{
         this.userPhoto = fileName;
     }
 
-    public void updateUser(UpdateUserDto updateUserDto, String fileUrl){
+    public void update(UpdateUserDto updateUserDto, String fileUrl){
         if(!Objects.isNull(updateUserDto.getUsername())) this.username = updateUserDto.getUsername();
         if(!Objects.isNull(updateUserDto.getIntro())) this.intro = updateUserDto.getIntro();
         if(!fileUrl.isEmpty()) this.userPhoto = fileUrl;

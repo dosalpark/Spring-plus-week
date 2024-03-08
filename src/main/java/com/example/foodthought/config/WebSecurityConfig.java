@@ -60,8 +60,8 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용
-                        .requestMatchers("/auth/logout").authenticated()// 설정
-                        .requestMatchers("/auth/**","/users/signup").permitAll()
+                        .requestMatchers("/api/auth/logout").authenticated()// 설정
+                        .requestMatchers("/api/auth/**","/api/users/signup").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/boards/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
