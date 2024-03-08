@@ -10,6 +10,10 @@ import com.example.foodthought.entity.Board;
 import com.example.foodthought.entity.Comment;
 import com.example.foodthought.entity.Status;
 import com.example.foodthought.entity.User;
+import com.example.foodthought.exception.customException.BoardNotFoundException;
+import com.example.foodthought.exception.customException.CommentNotFoundException;
+import com.example.foodthought.exception.customException.CommentReplyNotAllowedException;
+import com.example.foodthought.exception.customException.PermissionDeniedException;
 import com.example.foodthought.repository.BoardRepository;
 import com.example.foodthought.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +30,7 @@ import java.util.Objects;
 
 import static com.example.foodthought.entity.Status.BLOCKED;
 import static com.example.foodthought.entity.Status.NOTICE;
+import static com.example.foodthought.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -41,8 +46,7 @@ public class CommentServiceImpl implements CommentService {
     public ResponseDto<Boolean> createParentComment(Long boardId, CreateCommentRequestDto createCommentRequestDto, User user) {
         Board board = findBoard(boardId);
         commentRepository.save(toParentEntity(board, createCommentRequestDto.getContents(), user));
-        boolean success = true;
-        return ResponseDto.success(201, success);
+        return ResponseDto.success(201, true);
     }
 
 
@@ -52,8 +56,7 @@ public class CommentServiceImpl implements CommentService {
         Board board = findBoard(boardId);
         Comment parentComment = findParentComment(parentCommentId);
         commentRepository.save(toChildEntity(board, createCommentRequestDto.getContents(), parentComment, user));
-        boolean success = true;
-        return ResponseDto.success(201, success);
+        return ResponseDto.success(201, true);
     }
 
 
@@ -75,8 +78,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = findComment(commentId);
         checkOwnerAndStatus(comment, user);
         comment.updateComment(updateCommentRequest);
-        boolean success = true;
-        return ResponseDto.success(200, success);
+        return ResponseDto.success(200, true);
     }
 
 
@@ -88,8 +90,7 @@ public class CommentServiceImpl implements CommentService {
         Comment reply = findComment(replyId);
         checkOwnerAndStatus(reply, user);
         reply.updateComment(updateCommentRequest);
-        boolean success = true;
-        return ResponseDto.success(200, success);
+        return ResponseDto.success(200, true);
     }
 
 
@@ -101,8 +102,7 @@ public class CommentServiceImpl implements CommentService {
         checkOwnerAndStatus(comment, user);
         commentRepository.deleteAll(deleteRelatedChildComment(commentId));
         commentRepository.delete(comment);
-        boolean success = true;
-        return ResponseDto.success(200, success);
+        return ResponseDto.success(200, true);
     }
 
 
@@ -114,8 +114,7 @@ public class CommentServiceImpl implements CommentService {
         Comment reply = findComment(replyId);
         checkOwnerAndStatus(reply, user);
         commentRepository.delete(reply);
-        boolean success = true;
-        return ResponseDto.success(200, success);
+        return ResponseDto.success(200, true);
 
     }
 
@@ -126,8 +125,7 @@ public class CommentServiceImpl implements CommentService {
         findBoard(boardId);
         Comment comment = findComment(commentId);
         comment.updateStatusComment(updateStatusRequestDto);
-        boolean success = true;
-        return ResponseDto.success(200, success);
+        return ResponseDto.success(200, true);
     }
 
 
@@ -138,8 +136,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = findComment(commentId);
         commentRepository.deleteAll(deleteRelatedChildComment(commentId));
         commentRepository.delete(comment);
-        boolean success = true;
-        return ResponseDto.success(200, success);
+        return ResponseDto.success(200, true);
     }
 
 
@@ -177,22 +174,22 @@ public class CommentServiceImpl implements CommentService {
         if (!comment.getUser().getId().equals(user.getId()) ||
                 comment.getStatus().equals(BLOCKED) ||
                 comment.getStatus().equals(NOTICE)) {
-            throw new IllegalArgumentException("게시물에 대한 권한이 없습니다");
+            throw new PermissionDeniedException(PERMISSION_DENIED);
         }
     }
 
 
     private Comment findComment(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(
-                () -> new IllegalArgumentException("없는 댓글 입니다."));
+                () -> new CommentNotFoundException(NOT_FOUND_COMMENT));
     }
 
 
     private Comment findParentComment(Long parentCommentId) {
         Comment parentComment = commentRepository.findById(parentCommentId).orElseThrow(
-                () -> new IllegalArgumentException("없는 댓글 입니다."));
+                () -> new CommentNotFoundException(NOT_FOUND_COMMENT));
         if (!Objects.isNull(parentComment.getParentComment())) {
-            throw new IllegalArgumentException("대댓글에는 댓글을 달 수 없습니다.");
+            throw new CommentReplyNotAllowedException(COMMENT_REPLY_NOT_ALLOWED);
         }
         return parentComment;
     }
@@ -200,7 +197,7 @@ public class CommentServiceImpl implements CommentService {
 
     private Board findBoard(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(
-                () -> new IllegalArgumentException("없는 게시글입니다."));
+                () -> new BoardNotFoundException(NOT_FOUND_BOARD));
     }
 
 
@@ -211,14 +208,14 @@ public class CommentServiceImpl implements CommentService {
 
     private void findAllComment(Long boardId) {
         if (commentRepository.findByBoardIdAndStatusNotIn(boardId, Arrays.asList(Status.NOTICE, Status.BLOCKED)).isEmpty()) {
-            throw new IllegalArgumentException("등록된 게시물이 없습니다.");
+            throw new BoardNotFoundException(NOT_FOUND_SEARCH_BOARD);
         }
     }
 
 
     private void findAllAdminComment(Long boardId) {
         if (commentRepository.findByBoardId(boardId).isEmpty()) {
-            throw new IllegalArgumentException("등록된 게시물이 없습니다.");
+            throw new BoardNotFoundException(NOT_FOUND_SEARCH_BOARD);
         }
     }
 

@@ -6,6 +6,8 @@ import com.example.foodthought.entity.Board;
 import com.example.foodthought.entity.Book;
 import com.example.foodthought.entity.Like;
 import com.example.foodthought.entity.User;
+import com.example.foodthought.exception.customException.BoardNotFoundException;
+import com.example.foodthought.exception.customException.BookNotFoundException;
 import com.example.foodthought.repository.BoardRepository;
 import com.example.foodthought.repository.BookRepository;
 import com.example.foodthought.repository.LikeRepository;
@@ -16,9 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.foodthought.exception.ErrorCode.NOT_FOUND_BOARD;
+import static com.example.foodthought.exception.ErrorCode.NOT_FOUND_BOOK;
+
 @Service
 @RequiredArgsConstructor
 public class LikeServiceImpl implements LikeService {
+
+
     private final LikeRepository likeRepository;
     private final BoardRepository boardRepository;
     private final BookRepository bookRepository;
@@ -35,8 +42,7 @@ public class LikeServiceImpl implements LikeService {
             Like like = toEntity(user, board);
             likeRepository.save(like);
         }
-        boolean success = true;
-        return ResponseDto.success(200, success);
+        return ResponseDto.success(200, true);
     }
 
 
@@ -61,7 +67,7 @@ public class LikeServiceImpl implements LikeService {
 
     private Board findBoard(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(() ->
-                new IllegalArgumentException("해당하는 게시물이 없습니다."));
+                new BoardNotFoundException(NOT_FOUND_BOARD));
     }
 
 
@@ -75,7 +81,7 @@ public class LikeServiceImpl implements LikeService {
 
     private LikeTopResponseDto buildLikeTop(Board board, Long countLikes) {
         Book book = bookRepository.findById(board.getBookId())
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 책이 없습니다."));
+                .orElseThrow(() -> new BookNotFoundException(NOT_FOUND_BOOK));
         return LikeTopResponseDto.builder().boardId(board.getId())
                 .booktitle(book.getTitle())
                 .bookauthor(book.getAuthor())

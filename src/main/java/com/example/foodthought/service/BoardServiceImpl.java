@@ -7,6 +7,9 @@ import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.board.GetBoardResponseDto;
 import com.example.foodthought.dto.board.UpdateBoardRequestDto;
 import com.example.foodthought.entity.*;
+import com.example.foodthought.exception.customException.BoardNotFoundException;
+import com.example.foodthought.exception.customException.BookNotFoundException;
+import com.example.foodthought.exception.customException.PermissionDeniedException;
 import com.example.foodthought.repository.BoardRepository;
 import com.example.foodthought.repository.BookRepository;
 import com.example.foodthought.repository.CommentRepository;
@@ -22,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.foodthought.entity.Status.*;
+import static com.example.foodthought.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -70,8 +74,7 @@ public class BoardServiceImpl implements BoardService {
         checkOwnerAndStatus(board, user);
         board.update(updateBoardRequestDto, user);
         boardRepository.save(board);
-        boolean success = true;
-        return ResponseDto.success(200, success);
+        return ResponseDto.success(200, true);
     }
 
 
@@ -83,8 +86,7 @@ public class BoardServiceImpl implements BoardService {
         likeRepository.deleteAll(deleteRelatedLike(boardId));
         commentRepository.deleteAll(deleteRelatedComment(boardId));
         boardRepository.delete(board);
-        boolean success = true;
-        return ResponseDto.success(200, success);
+        return ResponseDto.success(200, true);
     }
 
     @Override
@@ -104,8 +106,7 @@ public class BoardServiceImpl implements BoardService {
         likeRepository.deleteAll(deleteRelatedLike(boardId));
         commentRepository.deleteAll(deleteRelatedComment(boardId));
         boardRepository.delete(board);
-        boolean success = true;
-        return ResponseDto.success(200, success);
+        return ResponseDto.success(200, true);
     }
 
 
@@ -114,33 +115,32 @@ public class BoardServiceImpl implements BoardService {
     public ResponseDto<Boolean> updateStatusBoard(Long boardId, UpdateStatusRequestDto updateStatusRequestDto) {
         Board board = findBoard(boardId);
         board.updateStatusBoard(updateStatusRequestDto);
-        boolean success = true;
-        return ResponseDto.success(200, success);
+        return ResponseDto.success(200, true);
     }
 
 
     private void findAllBoard() {
         if (boardRepository.findAllByStatus(POST).isEmpty()) {
-            throw new IllegalArgumentException("등록된 게시물이 없습니다.");
+            throw new BoardNotFoundException(NOT_FOUND_SEARCH_BOARD);
         }
     }
 
 
     private void findAllAdminBoard() {
         if (boardRepository.findAll().isEmpty()) {
-            throw new IllegalArgumentException("등록된 게시물이 없습니다.");
+            throw new BoardNotFoundException(NOT_FOUND_SEARCH_BOARD);
         }
     }
 
     private Board findBoard(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시물을 찾을 수 없습니다."));
+                () -> new BoardNotFoundException(NOT_FOUND_BOARD));
     }
 
 
     private Book findBook(Long bookId) {
         return bookRepository.findById(bookId).orElseThrow(
-                () -> new IllegalArgumentException("해당 도서를 찾을 수 없습니다."));
+                () -> new BookNotFoundException(NOT_FOUND_BOOK));
     }
 
 
@@ -148,7 +148,7 @@ public class BoardServiceImpl implements BoardService {
         if (!board.getUser().getId().equals(user.getId()) ||
                 board.getStatus().equals(BLOCKED) ||
                 board.getStatus().equals(NOTICE)) {
-            throw new IllegalArgumentException("게시물에 대한 권한이 없습니다");
+            throw new PermissionDeniedException(PERMISSION_DENIED);
         }
     }
 
