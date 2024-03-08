@@ -5,6 +5,9 @@ import com.example.foodthought.dto.admin.GetUsersResponseDto;
 import com.example.foodthought.dto.user.CreateUserDto;
 import com.example.foodthought.dto.user.UpdateUserDto;
 import com.example.foodthought.entity.User;
+import com.example.foodthought.exception.customException.ImageNotFoundException;
+import com.example.foodthought.exception.customException.PermissionDeniedException;
+import com.example.foodthought.exception.customException.UserNotFoundException;
 import com.example.foodthought.repository.UserRepository;
 import com.example.foodthought.util.StorageService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+
+import static com.example.foodthought.exception.ErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -100,20 +105,20 @@ public class UserServiceImpl implements UserService {
 
     private User findUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재 하지 않은 유저입니다"));
+                .orElseThrow(() -> new UserNotFoundException(NOT_FOUND_USER));
     }
 
 
     private void verifyIdentity(Long updateUserId, Long loginUserId) {
         if (!updateUserId.equals(loginUserId)) {
-            throw new IllegalArgumentException("회원 수정은 본인만 가능합니다");
+            throw new PermissionDeniedException(PERMISSION_DENIED);
         }
     }
 
 
     private String convertToString(MultipartFile file) throws IOException {
         if (file.isEmpty()) {
-            throw new IOException("이미지를 업로드 해주세요");
+            throw new ImageNotFoundException(NOT_FOUND_IMAGE);
         }
         return storageService.uploadFile(file);
     }
