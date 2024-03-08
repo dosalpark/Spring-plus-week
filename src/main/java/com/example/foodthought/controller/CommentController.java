@@ -30,7 +30,7 @@ public class CommentController {
             @RequestBody CreateCommentRequestDto createCommentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.createParentComment(
+        return ResponseEntity.status(201).body(commentService.createParentComment(
                 boardId,
                 createCommentRequestDto,
                 userDetails.getUser()));
@@ -45,7 +45,7 @@ public class CommentController {
             @RequestBody CreateCommentRequestDto createCommentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.createChildComment(
+        return ResponseEntity.status(201).body(commentService.createChildComment(
                 boardId,
                 parentCommentId,
                 createCommentRequestDto,
@@ -61,7 +61,7 @@ public class CommentController {
             @RequestParam(defaultValue = "3") int size,
             @RequestParam(defaultValue = "createAt") String sort,
             @RequestParam(defaultValue = "true") boolean isAsc) {
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.getComment(boardId, page, size, sort, isAsc));
+        return ResponseEntity.status(200).body(commentService.getComment(boardId, page, size, sort, isAsc));
     }
 
 
@@ -73,7 +73,7 @@ public class CommentController {
             @RequestBody UpdateCommentRequest updateCommentRequest,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.updateComment(
+        return ResponseEntity.status(200).body(commentService.updateComment(
                 boardId,
                 commentId,
                 updateCommentRequest,
@@ -90,7 +90,7 @@ public class CommentController {
             @RequestBody UpdateCommentRequest updateCommentRequest,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.updateReply(
+        return ResponseEntity.status(200).body(commentService.updateReply(
                 boardId,
                 parentCommentId,
                 replyId,
@@ -106,7 +106,7 @@ public class CommentController {
             @PathVariable Long commentId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.deleteComment(
+        return ResponseEntity.status(200).body(commentService.deleteComment(
                 boardId,
                 commentId,
                 userDetails.getUser()));
@@ -121,7 +121,7 @@ public class CommentController {
             @PathVariable Long replyId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.deleteReply(
+        return ResponseEntity.status(200).body(commentService.deleteReply(
                 boardId,
                 parentCommentId,
                 replyId,

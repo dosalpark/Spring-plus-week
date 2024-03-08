@@ -23,13 +23,13 @@ public class AuthController {
     public ResponseEntity<ResponseDto<Boolean>> login(
             @RequestBody LoginUserDto loginUserDto,
             HttpServletResponse response) {
-        return ResponseEntity.status(HttpStatus.OK).body(authService.login(loginUserDto, response));
+        return ResponseEntity.status(200).body(authService.login(loginUserDto, response));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<ResponseDto<Boolean>> logout(
             HttpServletRequest request,
             HttpServletResponse response) {
-        return ResponseEntity.status(HttpStatus.OK).body(authService.logout(request, response));
+        return ResponseEntity.status(200).body(authService.logout(request, response));
     }
 }

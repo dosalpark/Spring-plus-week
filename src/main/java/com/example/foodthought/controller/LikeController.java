@@ -25,13 +25,13 @@ public class LikeController {
     public ResponseEntity<ResponseDto<Boolean>> toggleLike(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable Long boardId) {
-        return ResponseEntity.status(HttpStatus.OK).body(likeService.toggleLike(userDetails.getUser(), boardId));
+        return ResponseEntity.status(200).body(likeService.toggleLike(userDetails.getUser(), boardId));
     }
 
 
     //가장 Like 많은 게시물 3개
     @GetMapping("/likes-top3")
     public ResponseEntity<ResponseDto<List<LikeTopResponseDto>>> findBoardByLikeTop3() {
-        return ResponseEntity.status(HttpStatus.OK).body(likeService.findBoardByLikeTop3());
+        return ResponseEntity.status(200).body(likeService.findBoardByLikeTop3());
     }
 }

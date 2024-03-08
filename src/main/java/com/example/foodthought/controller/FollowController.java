@@ -24,14 +24,14 @@ public class FollowController {
     //팔로잉/취소
     @PostMapping("/{userId}/follows")
     public ResponseEntity<ResponseDto<Boolean>> toggleFollow(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(followService.toggleFollow(userDetails.getUser(), userId));
+        return ResponseEntity.status(200).body(followService.toggleFollow(userDetails.getUser(), userId));
     }
 
 
     //가장 follow 많은 회원 3명
     @GetMapping("/follows-top3")
     public ResponseEntity<ResponseDto<List<FollowTopResponseDto>>> findFollowerByLikeTop3() {
-        return ResponseEntity.status(HttpStatus.OK).body(followService.findFollowerByLikeTop3());
+        return ResponseEntity.status(200).body(followService.findFollowerByLikeTop3());
     }
 }
 

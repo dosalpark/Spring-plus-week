@@ -30,27 +30,27 @@ public class AdminController {
     //user
     @GetMapping("/api/users")
     public ResponseEntity<ResponseDto<List<GetUsersResponseDto>>> getUsers() {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.findAllUser());
+        return ResponseEntity.status(200).body(adminService.findAllUser());
     }
 
 
     @DeleteMapping("/api/users/{userId}")
     public ResponseEntity<ResponseDto<Boolean>> deleteUser(@PathVariable Long userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.deleteUser(userId));
+        return ResponseEntity.status(200).body(adminService.deleteUser(userId));
     }
 
 
     //board
     @DeleteMapping("/api/boards/{boardId}")
     public ResponseEntity<ResponseDto<Boolean>> deleteAdminBoard(@PathVariable Long boardId) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.deleteAdminBoard(boardId));
+        return ResponseEntity.status(200).body(adminService.deleteAdminBoard(boardId));
     }
 
 
     @PutMapping("/api/boards/{boardId}/status")
     public ResponseEntity<ResponseDto<Boolean>> updateStatusAdminBoard(@PathVariable Long boardId,
                                                                        @RequestBody UpdateStatusRequestDto updateStatusRequestDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.updateStatusBoard(boardId, updateStatusRequestDto));
+        return ResponseEntity.status(200).body(adminService.updateStatusBoard(boardId, updateStatusRequestDto));
     }
 
 
@@ -60,7 +60,7 @@ public class AdminController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createAt") String sort,
             @RequestParam(defaultValue = "false") boolean isAsc) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.getAdminAllBoard(page, size, sort, isAsc));
+        return ResponseEntity.status(200).body(adminService.getAdminAllBoard(page, size, sort, isAsc));
     }
 
 
@@ -70,7 +70,7 @@ public class AdminController {
             @PathVariable Long boardId,
             @PathVariable Long commentId,
             @RequestBody UpdateStatusRequestDto updateStatusRequestDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.updateStatusComment(boardId, commentId, updateStatusRequestDto));
+        return ResponseEntity.status(200).body(adminService.updateStatusComment(boardId, commentId, updateStatusRequestDto));
     }
 
 
@@ -80,7 +80,7 @@ public class AdminController {
             @PathVariable Long commentId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.deleteAdminComment(boardId, commentId));
+        return ResponseEntity.status(200).body(adminService.deleteAdminComment(boardId, commentId));
     }
 
 
@@ -91,7 +91,7 @@ public class AdminController {
             @RequestParam(defaultValue = "3") int size,
             @RequestParam(defaultValue = "createAt") String sort,
             @RequestParam(defaultValue = "true") boolean isAsc) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.getAdminComment(boardId, page, size, sort, isAsc));
+        return ResponseEntity.status(200).body(adminService.getAdminComment(boardId, page, size, sort, isAsc));
     }
 
     //book
@@ -99,7 +99,7 @@ public class AdminController {
     public ResponseEntity<ResponseDto<Boolean>> createBook(
             @RequestPart CreateBookRequestDto createBookRequestDto,
             @RequestPart(value = "bookImage", required = true) MultipartFile file) throws IOException {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.createBook(createBookRequestDto, file));
+        return ResponseEntity.status(201).body(adminService.createBook(createBookRequestDto, file));
     }
 
 
@@ -108,12 +108,12 @@ public class AdminController {
             @PathVariable Long bookId,
             @RequestPart UpdateBookRequestDto updateBookRequestDto,
             @RequestPart(value = "bookImage", required = true) MultipartFile file) throws IOException {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.updateBook(bookId, updateBookRequestDto, file));
+        return ResponseEntity.status(200).body(adminService.updateBook(bookId, updateBookRequestDto, file));
     }
 
 
     @DeleteMapping("/api/books/{bookId}")
     public ResponseEntity<ResponseDto<Boolean>> deleteBook(@PathVariable Long bookId) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.deleteBook(bookId));
+        return ResponseEntity.status(200).body(adminService.deleteBook(bookId));
     }
 }

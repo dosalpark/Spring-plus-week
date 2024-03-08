@@ -27,13 +27,13 @@ public class UserController {
             @RequestPart @Valid CreateUserDto createUserDto,
             @RequestPart(value = "userPhoto",required = false) MultipartFile file
     ) throws IOException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(createUserDto,file));
+        return ResponseEntity.status(201).body(userService.createUser(createUserDto,file));
     }
 
 
     @GetMapping("/{userId}")
     public ResponseEntity<ResponseDto<GetUsersResponseDto>> getUser(@PathVariable Long userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.findOneUser(userId));
+        return ResponseEntity.status(200).body(userService.findOneUser(userId));
     }
 
 
@@ -42,6 +42,6 @@ public class UserController {
                                      @RequestPart @Valid UpdateUserDto updateUserDto,
                                      @RequestPart(value = "userPhoto",required = false) MultipartFile file,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(userId,updateUserDto,file,userDetails.getUser()));
+        return ResponseEntity.status(200).body(userService.updateUser(userId,updateUserDto,file,userDetails.getUser()));
     }
 }

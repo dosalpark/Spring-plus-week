@@ -70,7 +70,7 @@ public class BookServiceImpl implements BookService {
         book.update(updateBookRequestDto, convertToString(file));
         bookRepository.save(book);
         boolean success = true;
-        return ResponseDto.success(201, success);
+        return ResponseDto.success(200, success);
     }
 
 
@@ -79,7 +79,7 @@ public class BookServiceImpl implements BookService {
     public ResponseDto<Boolean> deleteBook(Long bookId) {
         bookRepository.delete(findBook(bookId));
         boolean success = true;
-        return ResponseDto.success(201, success);
+        return ResponseDto.success(200, success);
     }
 
 

@@ -26,7 +26,7 @@ public class BoardController {
     @PostMapping
     public ResponseEntity<ResponseDto<Boolean>> createBoard(@RequestBody CreateBoardRequestDto create,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(boardService.createBoard(create, userDetails.getUser()));
+        return ResponseEntity.status(201).body(boardService.createBoard(create, userDetails.getUser()));
     }
 
 
@@ -38,14 +38,14 @@ public class BoardController {
             @RequestParam(defaultValue = "createAt") String sort,
             @RequestParam(defaultValue = "false") boolean isAsc
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(boardService.getAllBoards(page, size, sort, isAsc));
+        return ResponseEntity.status(200).body(boardService.getAllBoards(page, size, sort, isAsc));
     }
 
 
     //게시물 단건 조회
     @GetMapping("/{boardId}")
     public ResponseEntity<ResponseDto<GetBoardResponseDto>> getBoard(@PathVariable Long boardId) {
-        return ResponseEntity.status(HttpStatus.OK).body(boardService.getBoard(boardId));
+        return ResponseEntity.status(200).body(boardService.getBoard(boardId));
     }
 
 
@@ -54,7 +54,7 @@ public class BoardController {
     public ResponseEntity<ResponseDto<Boolean>> updateBoard(@PathVariable Long boardId,
                                             @RequestBody UpdateBoardRequestDto update,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.status(HttpStatus.OK).body(boardService.updateBoard(boardId, update, userDetails.getUser()));
+        return ResponseEntity.status(200).body(boardService.updateBoard(boardId, update, userDetails.getUser()));
     }
 
 
@@ -62,6 +62,6 @@ public class BoardController {
     @DeleteMapping("/{boardId}")
     public ResponseEntity<ResponseDto<Boolean>> deleteBoard(@PathVariable Long boardId,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.status(HttpStatus.OK).body(boardService.deleteBoard(boardId, userDetails.getUser()));
+        return ResponseEntity.status(200).body(boardService.deleteBoard(boardId, userDetails.getUser()));
     }
 }
