@@ -1,6 +1,7 @@
 package com.example.foodthought.controller;
 
 import com.example.foodthought.common.dto.ResponseDto;
+import com.example.foodthought.dto.admin.GetUsersResponseDto;
 import com.example.foodthought.dto.admin.UpdateStatusRequestDto;
 import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.book.CreateBookRequestDto;
@@ -24,22 +25,18 @@ import java.util.List;
 public class AdminController {
 
     private final AdminService adminService;
-    //user
 
+
+    //user
     @GetMapping("/api/users")
-    public ResponseEntity getUsers() {
+    public ResponseEntity<ResponseDto<List<GetUsersResponseDto>>> getUsers() {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.findAllUser());
     }
 
-    @GetMapping("/api/users/{userId}")
-    public ResponseEntity getUser(@PathVariable Long userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.findUser(userId));
-    }
 
     @DeleteMapping("/api/users/{userId}")
-    public ResponseEntity deleteUser(@PathVariable Long userId) {
-        adminService.deleteUser(userId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<ResponseDto<Boolean>> deleteUser(@PathVariable Long userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.deleteUser(userId));
     }
 
 
@@ -56,13 +53,13 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.updateStatusBoard(boardId, updateStatusRequestDto));
     }
 
+
     @GetMapping("/api/boards")
     public ResponseEntity<ResponseDto<List<GetBoardAdminResponseDto>>> getAdminAllBoard(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createAt") String sort,
-            @RequestParam(defaultValue = "false") boolean isAsc
-    ) {
+            @RequestParam(defaultValue = "false") boolean isAsc) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.getAdminAllBoard(page, size, sort, isAsc));
     }
 
@@ -72,8 +69,7 @@ public class AdminController {
     public ResponseEntity<ResponseDto<Boolean>> updateStatusComment(
             @PathVariable Long boardId,
             @PathVariable Long commentId,
-            @RequestBody UpdateStatusRequestDto updateStatusRequestDto
-    ) {
+            @RequestBody UpdateStatusRequestDto updateStatusRequestDto) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.updateStatusComment(boardId, commentId, updateStatusRequestDto));
     }
 
@@ -82,8 +78,7 @@ public class AdminController {
     public ResponseEntity<ResponseDto<Boolean>> deleteAdminComment(
             @PathVariable Long boardId,
             @PathVariable Long commentId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         return ResponseEntity.status(HttpStatus.OK).body(adminService.deleteAdminComment(boardId, commentId));
     }
@@ -95,23 +90,19 @@ public class AdminController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "3") int size,
             @RequestParam(defaultValue = "createAt") String sort,
-            @RequestParam(defaultValue = "true") boolean isAsc
-    ) {
+            @RequestParam(defaultValue = "true") boolean isAsc) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.getAdminComment(boardId, page, size, sort, isAsc));
     }
 
     //book
-    //책 입력
     @PostMapping("/api/books")
     public ResponseEntity<ResponseDto<Boolean>> createBook(
             @RequestPart CreateBookRequestDto createBookRequestDto,
             @RequestPart(value = "bookImage", required = true) MultipartFile file) throws IOException {
-        adminService.createBook(createBookRequestDto, file);
         return ResponseEntity.status(HttpStatus.OK).body(adminService.createBook(createBookRequestDto, file));
     }
 
 
-    //책 수정
     @PutMapping("/api/books/{bookId}")
     public ResponseEntity<ResponseDto<Boolean>> updateBook(
             @PathVariable Long bookId,
@@ -121,7 +112,6 @@ public class AdminController {
     }
 
 
-    //책 삭제
     @DeleteMapping("/api/books/{bookId}")
     public ResponseEntity<ResponseDto<Boolean>> deleteBook(@PathVariable Long bookId) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.deleteBook(bookId));

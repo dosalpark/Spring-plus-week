@@ -7,9 +7,7 @@ import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.book.CreateBookRequestDto;
 import com.example.foodthought.dto.book.UpdateBookRequestDto;
 import com.example.foodthought.dto.comment.CommentAdminResponseDto;
-import com.example.foodthought.entity.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,51 +18,32 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AdminService {
+
+
     private final UserService userService;
     private final BoardService boardService;
     private final CommentService commentService;
     private final BookService bookService;
-    private final PasswordEncoder passwordEncoder;
+
 
     //user
-    public List<GetUsersResponseDto> findAllUser() {
-        return userService.findAllUser()
-                .stream()
-                .map(user -> GetUsersResponseDto.builder()
-                        .id(user.getId())
-                        .userId(user.getUserId())
-                        .username(user.getUsername())
-                        .intro(user.getIntro())
-                        .userPhoto(user.getUserPhoto())
-                        .build())
-                .toList();
+    public ResponseDto<List<GetUsersResponseDto>> findAllUser() {
+        return userService.findAllUser();
     }
 
-    public GetUsersResponseDto findUser(Long userId) {
-        User user = userService.findUser(userId);
-        return GetUsersResponseDto.builder()
-                .id(user.getId())
-                .userId(user.getUserId())
-                .username(user.getUsername())
-                .intro(user.getIntro())
-                .userPhoto(user.getUserPhoto())
-                .build();
-    }
 
     @Transactional
-    public void deleteUser(Long userId) {
-        userService.deleteUser(userId);
+    public ResponseDto<Boolean> deleteUser(Long userId) {
+        return userService.deleteUser(userId);
     }
 
 
     //board
-    @Transactional
     public ResponseDto<Boolean> deleteAdminBoard(Long boardId) {
         return boardService.deleteAdminBoard(boardId);
     }
 
 
-    @Transactional
     public ResponseDto<Boolean> updateStatusBoard(Long boardId, UpdateStatusRequestDto updateStatusRequestDto) {
         return boardService.updateStatusBoard(boardId, updateStatusRequestDto);
     }
@@ -76,13 +55,11 @@ public class AdminService {
 
 
     //comment
-    @Transactional
     public ResponseDto<Boolean> deleteAdminComment(Long boardId, Long commentId) {
         return commentService.deleteAdminComment(boardId, commentId);
     }
 
 
-    @Transactional
     public ResponseDto<Boolean> updateStatusComment(Long boardId, Long commentId, UpdateStatusRequestDto updateStatusRequestDto) {
         return commentService.updateStatusComment(boardId, commentId, updateStatusRequestDto);
     }
