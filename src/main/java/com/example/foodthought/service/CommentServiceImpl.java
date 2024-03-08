@@ -10,10 +10,7 @@ import com.example.foodthought.entity.Board;
 import com.example.foodthought.entity.Comment;
 import com.example.foodthought.entity.Status;
 import com.example.foodthought.entity.User;
-import com.example.foodthought.exception.customException.BoardNotFoundException;
-import com.example.foodthought.exception.customException.CommentNotFoundException;
-import com.example.foodthought.exception.customException.CommentReplyNotAllowedException;
-import com.example.foodthought.exception.customException.PermissionDeniedException;
+import com.example.foodthought.exception.customException.*;
 import com.example.foodthought.repository.BoardRepository;
 import com.example.foodthought.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +51,8 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public ResponseDto<Boolean> createChildComment(Long boardId, Long parentCommentId, CreateCommentRequestDto createCommentRequestDto, User user) {
         Board board = findBoard(boardId);
-        Comment parentComment = findParentComment(parentCommentId);
+        Comment parentComment = findComment(parentCommentId);
+        findBoardByParentComment(board.getId(),parentComment.getBoard().getId());
         commentRepository.save(toChildEntity(board, createCommentRequestDto.getContents(), parentComment, user));
         return ResponseDto.success(201, true);
     }
@@ -198,6 +196,13 @@ public class CommentServiceImpl implements CommentService {
     private Board findBoard(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(
                 () -> new BoardNotFoundException(NOT_FOUND_BOARD));
+    }
+
+
+    private void findBoardByParentComment(Long boardId, Long parentCommentBoardId) {
+        if(!boardId.equals(parentCommentBoardId)){
+            throw new BoardReplyNotAllowedException(REPLY_NOT_ALLOWED);
+        }
     }
 
 

@@ -121,4 +121,11 @@ public class GlobalExceptionHandler {
         log.error("url {}, message : {}, statusCode: {}", request.getRequestURI(), ex.getErrorCode().getMessage(), ex.getErrorCode().getStatus());
         return ResponseEntity.badRequest().body(ResponseDto.fail(ex.getErrorCode().getStatus().value(), ex.getErrorCode().getMessage()));
     }
+
+
+    @ExceptionHandler(BoardReplyNotAllowedException.class)
+    public ResponseEntity handBoardReplyNotAllowedException(BoardReplyNotAllowedException ex, HttpServletRequest request) {
+        log.error("url {}, message : {}, statusCode: {}", request.getRequestURI(), ex.getErrorCode().getMessage(), ex.getErrorCode().getStatus());
+        return ResponseEntity.badRequest().body(ResponseDto.fail(ex.getErrorCode().getStatus().value(), ex.getErrorCode().getMessage()));
+    }
 }

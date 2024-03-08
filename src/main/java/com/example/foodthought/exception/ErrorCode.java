@@ -10,6 +10,7 @@ public enum ErrorCode {
     NOT_FOUND_BOOK(HttpStatus.BAD_REQUEST,"해당하는 책이 없습니다."),
     NOT_FOUND_SEARCH_TITLE_BOOK(HttpStatus.BAD_REQUEST," - 검색결과가 없습니다."),
     NOT_FOUND_SEARCH_BOOK(HttpStatus.BAD_REQUEST,"등록된 책이 없습니다."),
+    REPLY_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "댓글이 달린 게시물에만 대댓글을 달 수 있습니다."),
     NOT_FOUND_BOARD(HttpStatus.BAD_REQUEST,"해당하는 게시물이 없습니다."),
     NOT_FOUND_SEARCH_BOARD(HttpStatus.BAD_REQUEST,"등록된 게시물이 없습니다."),
     NOT_FOUND_COMMENT(HttpStatus.BAD_REQUEST,"해당하는 댓글이 없습니다."),
