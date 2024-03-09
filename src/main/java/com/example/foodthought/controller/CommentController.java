@@ -81,22 +81,22 @@ public class CommentController {
     }
 
 
-    // 대댓글 수정
-    @PutMapping("/{boardId}/comments/{parentCommentId}/replies/{replyId}")
-    public ResponseEntity<ResponseDto<Boolean>> updateReply(
-            @PathVariable Long boardId,
-            @PathVariable Long parentCommentId,
-            @PathVariable Long replyId,
-            @RequestBody UpdateCommentRequest updateCommentRequest,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
-        return ResponseEntity.status(200).body(commentService.updateReply(
-                boardId,
-                parentCommentId,
-                replyId,
-                updateCommentRequest,
-                userDetails.getUser()));
-    }
+//    // 대댓글 수정
+//    @PutMapping("/{boardId}/comments/{parentCommentId}/replies/{replyId}")
+//    public ResponseEntity<ResponseDto<Boolean>> updateReply(
+//            @PathVariable Long boardId,
+//            @PathVariable Long parentCommentId,
+//            @PathVariable Long replyId,
+//            @RequestBody UpdateCommentRequest updateCommentRequest,
+//            @AuthenticationPrincipal UserDetailsImpl userDetails
+//    ) {
+//        return ResponseEntity.status(200).body(commentService.updateReply(
+//                boardId,
+//                parentCommentId,
+//                replyId,
+//                updateCommentRequest,
+//                userDetails.getUser()));
+//    }
 
 
     // 댓글 삭제
@@ -113,18 +113,18 @@ public class CommentController {
     }
 
 
-    // 대댓글 삭제
-    @DeleteMapping("/{boardId}/comments/{parentCommentId}/replies/{replyId}")
-    public ResponseEntity<ResponseDto<Boolean>> deleteReply(
-            @PathVariable Long boardId,
-            @PathVariable Long parentCommentId,
-            @PathVariable Long replyId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
-        return ResponseEntity.status(200).body(commentService.deleteReply(
-                boardId,
-                parentCommentId,
-                replyId,
-                userDetails.getUser()));
-    }
+//    // 대댓글 삭제
+//    @DeleteMapping("/{boardId}/comments/{parentCommentId}/replies/{replyId}")
+//    public ResponseEntity<ResponseDto<Boolean>> deleteReply(
+//            @PathVariable Long boardId,
+//            @PathVariable Long parentCommentId,
+//            @PathVariable Long replyId,
+//            @AuthenticationPrincipal UserDetailsImpl userDetails
+//    ) {
+//        return ResponseEntity.status(200).body(commentService.deleteReply(
+//                boardId,
+//                parentCommentId,
+//                replyId,
+//                userDetails.getUser()));
+//    }
 }

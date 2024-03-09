@@ -1,14 +1,15 @@
 package com.example.foodthought.service;
 
 import com.example.foodthought.common.dto.ResponseDto;
+import com.example.foodthought.controller.BoardController;
 import com.example.foodthought.dto.admin.GetUsersResponseDto;
 import com.example.foodthought.dto.user.CreateUserDto;
 import com.example.foodthought.dto.user.UpdateUserDto;
-import com.example.foodthought.entity.User;
+import com.example.foodthought.entity.*;
 import com.example.foodthought.exception.customException.ImageNotFoundException;
 import com.example.foodthought.exception.customException.PermissionDeniedException;
 import com.example.foodthought.exception.customException.UserNotFoundException;
-import com.example.foodthought.repository.UserRepository;
+import com.example.foodthought.repository.*;
 import com.example.foodthought.util.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +29,10 @@ public class UserServiceImpl implements UserService {
 
 
     private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
+    private final FollowRepository followRepository;
     private final PasswordEncoder passwordEncoder;
     private final StorageService storageService;
 
@@ -84,6 +89,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public ResponseDto<Boolean> deleteUser(Long userId) {
+        followRepository.deleteAll(followRepository.findFollowsByUserId(userId));
+        likeRepository.deleteAll(likeRepository.findLikesByUser_Id(userId));
+        commentRepository.deleteAll(commentRepository.findCommentsByUser_Id(userId));
+        boardRepository.deleteAll(boardRepository.findBoardsByUser_Id(userId));
         userRepository.delete(findUser(userId));
         return ResponseDto.success(200, true);
     }
@@ -121,5 +130,25 @@ public class UserServiceImpl implements UserService {
             throw new ImageNotFoundException(NOT_FOUND_IMAGE);
         }
         return storageService.uploadFile(file);
+    }
+
+
+    private List<Board> deleteRelatedBoard(Long userId) {
+        return boardRepository.findBoardsByUser_Id(userId);
+    }
+
+
+    private List<Comment> deleteRelatedComment(Long userId) {
+        return commentRepository.findCommentsByUser_Id(userId);
+    }
+
+
+    private List<Like> deleteRelatedLike(Long userId) {
+        return likeRepository.findLikesByUser_Id(userId);
+    }
+
+
+    private List<Follow> deleteRelatedFollow(Long userId) {
+        return followRepository.findFollowsByUserId(userId);
     }
 }
