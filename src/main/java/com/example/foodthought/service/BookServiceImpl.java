@@ -5,6 +5,9 @@ import com.example.foodthought.dto.book.CreateBookRequestDto;
 import com.example.foodthought.dto.book.GetBookResponseDto;
 import com.example.foodthought.dto.book.UpdateBookRequestDto;
 import com.example.foodthought.entity.Book;
+import com.example.foodthought.exception.customException.BookNotFoundException;
+import com.example.foodthought.exception.customException.BookSearchNotFoundException;
+import com.example.foodthought.exception.customException.ImageNotFoundException;
 import com.example.foodthought.repository.BookRepository;
 import com.example.foodthought.util.StorageService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.foodthought.exception.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
@@ -32,13 +37,13 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     public ResponseDto<List<GetBookResponseDto>> getAllBook(int page, int size, String sort, boolean isAsc, String title) {
         title = title.trim();
-        if (title.isEmpty()) {
+        if (!title.isEmpty()) {
             if (bookRepository.findAllByTitleContains(title).isEmpty()) {
-                throw new IllegalArgumentException("도서명에 " + title + "이 들어가는 책이 없습니다.");
+                throw new BookSearchNotFoundException(NOT_FOUND_SEARCH_TITLE_BOOK, title);
             }
         } else {
             if (bookRepository.findAll().isEmpty()) {
-                throw new IllegalArgumentException("등록된 책이 없습니다.");
+                throw new BookNotFoundException(NOT_FOUND_BOOK);
             }
         }
         PageRequest pageRequest = PageRequest.of(page, size, !isAsc ? Sort.by(sort).descending() : Sort.by(sort).ascending());
@@ -58,8 +63,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public ResponseDto<Boolean> createBook(CreateBookRequestDto createBookRequestDto, MultipartFile file) throws IOException {
         bookRepository.save(convertToBook(createBookRequestDto, convertToString(file)));
-        boolean success = true;
-        return ResponseDto.success(201, success);
+        return ResponseDto.success(201, true);
     }
 
 
@@ -69,8 +73,7 @@ public class BookServiceImpl implements BookService {
         Book book = findBook(bookId);
         book.update(updateBookRequestDto, convertToString(file));
         bookRepository.save(book);
-        boolean success = true;
-        return ResponseDto.success(200, success);
+        return ResponseDto.success(200, true);
     }
 
 
@@ -78,15 +81,13 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public ResponseDto<Boolean> deleteBook(Long bookId) {
         bookRepository.delete(findBook(bookId));
-        boolean success = true;
-        return ResponseDto.success(200, success);
+        return ResponseDto.success(200, true);
     }
 
 
     private Book findBook(Long bookId) {
         return bookRepository.findById(bookId).orElseThrow(()
-                -> new IllegalArgumentException("해당하는 책이 없습니다.")
-        );
+                -> new BookNotFoundException(NOT_FOUND_BOOK));
     }
 
 
@@ -97,6 +98,8 @@ public class BookServiceImpl implements BookService {
                 .publisher(book.getPublisher())
                 .image(book.getImage())
                 .category(book.getCategory())
+                .createAt(book.getCreateAt())
+                .modifiedAt(book.getModifiedAt())
                 .build();
     }
 
@@ -132,7 +135,7 @@ public class BookServiceImpl implements BookService {
 
     private String convertToString(MultipartFile file) throws IOException {
         if (file.isEmpty()) {
-            throw new IOException("이미지를 업로드 해주세요");
+            throw new ImageNotFoundException(NOT_FOUND_IMAGE);
         }
         return storageService.uploadFile(file);
     }

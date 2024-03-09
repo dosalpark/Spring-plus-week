@@ -19,6 +19,6 @@ public interface BoardRepository extends JpaRepository<Board, Long>, PagingAndSo
 
     Page<Board> findAllByStatusNot(Status status, Pageable pageable);
 
-
+    List<Board> findBoardsByUser_Id(Long userId);
 }
 

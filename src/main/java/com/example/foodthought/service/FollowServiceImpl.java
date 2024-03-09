@@ -4,6 +4,8 @@ import com.example.foodthought.common.dto.ResponseDto;
 import com.example.foodthought.dto.follow.FollowTopResponseDto;
 import com.example.foodthought.entity.Follow;
 import com.example.foodthought.entity.User;
+import com.example.foodthought.exception.customException.SelfFollowException;
+import com.example.foodthought.exception.customException.UserNotFoundException;
 import com.example.foodthought.repository.FollowRepository;
 import com.example.foodthought.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.foodthought.exception.ErrorCode.CANNOT_FOLLOW_SELF;
+import static com.example.foodthought.exception.ErrorCode.NOT_FOUND_USER;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +30,7 @@ public class FollowServiceImpl implements FollowService {
     @Override
     @Transactional
     public ResponseDto<Boolean> toggleFollow(User user, Long followerId) {
-        User follower = findUser(user.getId());
+        User follower = findUser(followerId);
         Follow oldFollow = findFollow(user.getId(), follower.getId());
         if (oldFollow != null) {
             followRepository.delete(oldFollow);
@@ -33,8 +38,7 @@ public class FollowServiceImpl implements FollowService {
             Follow follow = toEntity(user, follower);
             followRepository.save(follow);
         }
-        boolean success = true;
-        return ResponseDto.success(200, success);
+        return ResponseDto.success(200, true);
     }
 
 
@@ -54,7 +58,7 @@ public class FollowServiceImpl implements FollowService {
 
     private Follow findFollow(Long followingId, Long followerId) {
         if (followingId.equals(followerId)) {
-            throw new IllegalArgumentException("본인을 Follow 할 수 없습니다.");
+            throw new SelfFollowException(CANNOT_FOLLOW_SELF);
         }
         return followRepository.findFollowsByFollowing_IdAndFollower_Id(followingId, followerId);
     }
@@ -62,7 +66,7 @@ public class FollowServiceImpl implements FollowService {
 
     private User findUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(() ->
-                new IllegalArgumentException("해당하는  유저가 없습니다."));
+                new UserNotFoundException(NOT_FOUND_USER));
     }
 
 
