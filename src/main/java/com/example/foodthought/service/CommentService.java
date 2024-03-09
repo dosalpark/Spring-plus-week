@@ -61,17 +61,17 @@ public interface CommentService {
     public ResponseDto<Boolean> updateComment(Long boardId, Long commentId, UpdateCommentRequest updateCommentRequest, User user);
 
 
-    /**
-     * 대댓글 수정
-     *
-     * @param boardId              대댓글 수정할 게시글 ID 값
-     * @param parentCommentId      대댓글 수정할 댓글 ID 값
-     * @param replyId              수정할 대댓글 ID 값
-     * @param updateCommentRequest 수정할 대댓글 내용
-     * @param user                 작성자
-     * @return 성공시 true, 실패는 Exception 으로 처리
-     */
-    public ResponseDto<Boolean> updateReply(Long boardId, Long parentCommentId, Long replyId, UpdateCommentRequest updateCommentRequest, User user);
+//    /**
+//     * 대댓글 수정
+//     *
+//     * @param boardId              대댓글 수정할 게시글 ID 값
+//     * @param parentCommentId      대댓글 수정할 댓글 ID 값
+//     * @param replyId              수정할 대댓글 ID 값
+//     * @param updateCommentRequest 수정할 대댓글 내용
+//     * @param user                 작성자
+//     * @return 성공시 true, 실패는 Exception 으로 처리
+//     */
+//    public ResponseDto<Boolean> updateReply(Long boardId, Long parentCommentId, Long replyId, UpdateCommentRequest updateCommentRequest, User user);
 
 
     /**
@@ -85,16 +85,16 @@ public interface CommentService {
     public ResponseDto<Boolean> deleteComment(Long boardId, Long commentId, User user);
 
 
-    /**
-     * 대댓글 삭제
-     *
-     * @param boardId         대댓글 삭제할 게시글 ID값
-     * @param parentCommentId 대댓글 삭제할 댓글 ID값
-     * @param replyId         삭제할 대댓글 ID 값
-     * @param user            작성자
-     * @return 성공시 true, 실패는 Exception 으로 처리
-     */
-    public ResponseDto<Boolean> deleteReply(Long boardId, Long parentCommentId, Long replyId, User user);
+//    /**
+//     * 대댓글 삭제
+//     *
+//     * @param boardId         대댓글 삭제할 게시글 ID값
+//     * @param parentCommentId 대댓글 삭제할 댓글 ID값
+//     * @param replyId         삭제할 대댓글 ID 값
+//     * @param user            작성자
+//     * @return 성공시 true, 실패는 Exception 으로 처리
+//     */
+//    public ResponseDto<Boolean> deleteReply(Long boardId, Long parentCommentId, Long replyId, User user);
 
 
     /**

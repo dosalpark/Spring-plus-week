@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import static com.example.foodthought.entity.Status.BLOCKED;
 import static com.example.foodthought.entity.Status.NOTICE;
@@ -52,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
     public ResponseDto<Boolean> createChildComment(Long boardId, Long parentCommentId, CreateCommentRequestDto createCommentRequestDto, User user) {
         Board board = findBoard(boardId);
         Comment parentComment = findComment(parentCommentId);
-        findBoardByParentComment(board.getId(),parentComment.getBoard().getId());
+        findBoardByParentComment(board.getId(), parentComment.getBoard().getId());
         commentRepository.save(toChildEntity(board, createCommentRequestDto.getContents(), parentComment, user));
         return ResponseDto.success(201, true);
     }
@@ -72,31 +71,34 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public ResponseDto<Boolean> updateComment(Long boardId, Long commentId, UpdateCommentRequest updateCommentRequest, User user) {
-        findBoard(boardId);
+        Board board = findBoard(boardId);
         Comment comment = findComment(commentId);
+        findBoardByComment(board.getId(), comment.getBoard().getId());
         checkOwnerAndStatus(comment, user);
         comment.updateComment(updateCommentRequest);
         return ResponseDto.success(200, true);
     }
 
 
-    @Override
-    @Transactional
-    public ResponseDto<Boolean> updateReply(Long boardId, Long parentCommentId, Long replyId, UpdateCommentRequest updateCommentRequest, User user) {
-        findBoard(boardId);
-        findComment(parentCommentId);
-        Comment reply = findComment(replyId);
-        checkOwnerAndStatus(reply, user);
-        reply.updateComment(updateCommentRequest);
-        return ResponseDto.success(200, true);
-    }
+//    @Override
+//    @Transactional
+//    public ResponseDto<Boolean> updateReply(Long boardId, Long parentCommentId, Long replyId, UpdateCommentRequest updateCommentRequest, User user) {
+//        Board board = findBoard(boardId);
+//        Comment parentComment = findComment(parentCommentId);
+//        findBoardByParentComment(board.getId(),parentComment.getBoard().getId());
+//        Comment reply = findComment(replyId);
+//        checkOwnerAndStatus(reply, user);
+//        reply.updateComment(updateCommentRequest);
+//        return ResponseDto.success(200, true);
+//    }
 
 
     @Override
     @Transactional
     public ResponseDto<Boolean> deleteComment(Long boardId, Long commentId, User user) {
-        findBoard(boardId);
+        Board board = findBoard(boardId);
         Comment comment = findComment(commentId);
+        findBoardByComment(board.getId(), comment.getBoard().getId());
         checkOwnerAndStatus(comment, user);
         commentRepository.deleteAll(deleteRelatedChildComment(commentId));
         commentRepository.delete(comment);
@@ -104,17 +106,18 @@ public class CommentServiceImpl implements CommentService {
     }
 
 
-    @Override
-    @Transactional
-    public ResponseDto<Boolean> deleteReply(Long boardId, Long parentCommentId, Long replyId, User user) {
-        findBoard(boardId);
-        findComment(parentCommentId);
-        Comment reply = findComment(replyId);
-        checkOwnerAndStatus(reply, user);
-        commentRepository.delete(reply);
-        return ResponseDto.success(200, true);
-
-    }
+//    @Override
+//    @Transactional
+//    public ResponseDto<Boolean> deleteReply(Long boardId, Long parentCommentId, Long replyId, User user) {
+//        Board board = findBoard(boardId);
+//        Comment parentComment = findComment(parentCommentId);
+//        findBoardByParentComment(board.getId(),parentComment.getBoard().getId());
+//        Comment reply = findComment(replyId);
+//        checkOwnerAndStatus(reply, user);
+//        commentRepository.delete(reply);
+//        return ResponseDto.success(200, true);
+//
+//    }
 
 
     @Override
@@ -183,14 +186,19 @@ public class CommentServiceImpl implements CommentService {
     }
 
 
-    private Comment findParentComment(Long parentCommentId) {
-        Comment parentComment = commentRepository.findById(parentCommentId).orElseThrow(
-                () -> new CommentNotFoundException(NOT_FOUND_COMMENT));
-        if (!Objects.isNull(parentComment.getParentComment())) {
-            throw new CommentReplyNotAllowedException(COMMENT_REPLY_NOT_ALLOWED);
+    private void findBoardByComment(Long boardId, Long commentBoardId) {
+        if (!boardId.equals(commentBoardId)) {
+            throw new CommentMismatchException(COMMENT_MISMATCH_BOARD);
         }
-        return parentComment;
     }
+//    private Comment findParentComment(Long parentCommentId) {
+//        Comment parentComment = commentRepository.findById(parentCommentId).orElseThrow(
+//                () -> new CommentNotFoundException(NOT_FOUND_COMMENT));
+//        if (!Objects.isNull(parentComment.getParentComment())) {
+//            throw new CommentReplyNotAllowedException(COMMENT_REPLY_NOT_ALLOWED);
+//        }
+//        return parentComment;
+//    }
 
 
     private Board findBoard(Long boardId) {
@@ -200,7 +208,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     private void findBoardByParentComment(Long boardId, Long parentCommentBoardId) {
-        if(!boardId.equals(parentCommentBoardId)){
+        if (!boardId.equals(parentCommentBoardId)) {
             throw new BoardReplyNotAllowedException(REPLY_NOT_ALLOWED);
         }
     }

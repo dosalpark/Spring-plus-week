@@ -4,12 +4,12 @@ import com.example.foodthought.exception.ErrorCode;
 import lombok.Getter;
 
 @Getter
-public class CommentReplyNotAllowedException extends RuntimeException {
+public class CommentMismatchException extends RuntimeException {
 
     private ErrorCode errorCode;
 
 
-    public CommentReplyNotAllowedException(ErrorCode errorCode) {
+    public CommentMismatchException(ErrorCode errorCode) {
         this.errorCode = errorCode;
     }
 

@@ -109,8 +109,8 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(CommentReplyNotAllowedException.class)
-    public ResponseEntity handleCommentReplyNotAllowedException(CommentReplyNotAllowedException ex, HttpServletRequest request) {
+    @ExceptionHandler(CommentMismatchException.class)
+    public ResponseEntity handleCommentReplyNotAllowedException(CommentMismatchException ex, HttpServletRequest request) {
         log.error("url {}, message : {}, statusCode: {}", request.getRequestURI(), ex.getErrorCode().getMessage(), ex.getErrorCode().getStatus());
         return ResponseEntity.badRequest().body(ResponseDto.fail(ex.getErrorCode().getStatus().value(), ex.getErrorCode().getMessage()));
     }
