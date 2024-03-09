@@ -6,8 +6,8 @@ import com.example.foodthought.dto.board.GetBoardResponseDto;
 import com.example.foodthought.dto.board.UpdateBoardRequestDto;
 import com.example.foodthought.security.UserDetailsImpl;
 import com.example.foodthought.service.BoardService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +24,8 @@ public class BoardController {
 
     //게시물 생성
     @PostMapping
-    public ResponseEntity<ResponseDto<Boolean>> createBoard(@RequestBody CreateBoardRequestDto create,
-                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ResponseDto<Boolean>> createBoard(@Valid @RequestBody CreateBoardRequestDto create,
+                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.status(201).body(boardService.createBoard(create, userDetails.getUser()));
     }
 
@@ -52,8 +52,8 @@ public class BoardController {
     //게시물 수정
     @PutMapping("/{boardId}")
     public ResponseEntity<ResponseDto<Boolean>> updateBoard(@PathVariable Long boardId,
-                                            @RequestBody UpdateBoardRequestDto update,
-                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                            @RequestBody UpdateBoardRequestDto update,
+                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.status(200).body(boardService.updateBoard(boardId, update, userDetails.getUser()));
     }
 
@@ -61,7 +61,7 @@ public class BoardController {
     //게시물 삭제
     @DeleteMapping("/{boardId}")
     public ResponseEntity<ResponseDto<Boolean>> deleteBoard(@PathVariable Long boardId,
-                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.status(200).body(boardService.deleteBoard(boardId, userDetails.getUser()));
     }
 }

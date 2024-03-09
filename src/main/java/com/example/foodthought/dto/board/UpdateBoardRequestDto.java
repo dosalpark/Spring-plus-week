@@ -1,7 +1,8 @@
 package com.example.foodthought.dto.board;
 
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 @Builder

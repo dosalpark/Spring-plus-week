@@ -9,8 +9,8 @@ import com.example.foodthought.dto.book.UpdateBookRequestDto;
 import com.example.foodthought.dto.comment.CommentAdminResponseDto;
 import com.example.foodthought.security.UserDetailsImpl;
 import com.example.foodthought.service.AdminService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +49,7 @@ public class AdminController {
 
     @PutMapping("/api/boards/{boardId}/status")
     public ResponseEntity<ResponseDto<Boolean>> updateStatusAdminBoard(@PathVariable Long boardId,
-                                                                       @RequestBody UpdateStatusRequestDto updateStatusRequestDto) {
+                                                                       @Valid @RequestBody UpdateStatusRequestDto updateStatusRequestDto) {
         return ResponseEntity.status(200).body(adminService.updateStatusBoard(boardId, updateStatusRequestDto));
     }
 
@@ -97,7 +97,7 @@ public class AdminController {
     //book
     @PostMapping("/api/books")
     public ResponseEntity<ResponseDto<Boolean>> createBook(
-            @RequestPart CreateBookRequestDto createBookRequestDto,
+            @Valid @RequestPart CreateBookRequestDto createBookRequestDto,
             @RequestPart(value = "bookImage", required = true) MultipartFile file) throws IOException {
         return ResponseEntity.status(201).body(adminService.createBook(createBookRequestDto, file));
     }
