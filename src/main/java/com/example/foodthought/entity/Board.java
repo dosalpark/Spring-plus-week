@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 
 @Entity
 @Getter
@@ -38,7 +40,7 @@ public class Board extends Timestamped {
 
     public void update(UpdateBoardRequestDto dto, User user) {
         this.user = user;
-        this.bookId = dto.getBookId();
+        if (!Objects.isNull(dto.getBookId())) this.bookId = dto.getBookId();
         if (!dto.getContents().isEmpty()) this.contents = dto.getContents();
     }
 
