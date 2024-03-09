@@ -24,10 +24,15 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors()
                 .forEach(c -> errors.put(((FieldError) c).getField(), c.getDefaultMessage()));
+        for (Map.Entry<String, String> entry : errors.entrySet()) {
+            String errorCode = entry.getKey();
+            String errorMessage = entry.getValue();
+            log.error("url: {}, 메세지: {}, 에러코드: {}",request.getRequestURI(),errorCode,errorMessage);
+        }
         return ResponseEntity.badRequest().body(ResponseDto.fail(400, errors));
     }
 
