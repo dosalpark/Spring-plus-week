@@ -6,8 +6,8 @@ import com.example.foodthought.dto.comment.CreateCommentRequestDto;
 import com.example.foodthought.dto.comment.UpdateCommentRequest;
 import com.example.foodthought.security.UserDetailsImpl;
 import com.example.foodthought.service.CommentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +27,7 @@ public class CommentController {
     @PostMapping("/{boardId}/comments")
     public ResponseEntity<ResponseDto<Boolean>> createParentComment(
             @PathVariable Long boardId,
-            @RequestBody CreateCommentRequestDto createCommentRequestDto,
+            @Valid @RequestBody CreateCommentRequestDto createCommentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return ResponseEntity.status(201).body(commentService.createParentComment(
@@ -42,7 +42,7 @@ public class CommentController {
     public ResponseEntity<ResponseDto<Boolean>> createChildComment(
             @PathVariable Long boardId,
             @PathVariable Long parentCommentId,
-            @RequestBody CreateCommentRequestDto createCommentRequestDto,
+            @Valid @RequestBody CreateCommentRequestDto createCommentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return ResponseEntity.status(201).body(commentService.createChildComment(
@@ -70,7 +70,7 @@ public class CommentController {
     public ResponseEntity<ResponseDto<Boolean>> updateComment(
             @PathVariable Long boardId,
             @PathVariable Long commentId,
-            @RequestBody UpdateCommentRequest updateCommentRequest,
+            @Valid @RequestBody UpdateCommentRequest updateCommentRequest,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return ResponseEntity.status(200).body(commentService.updateComment(
