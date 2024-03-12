@@ -35,20 +35,11 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseDto<List<GetBookResponseDto>> getAllBook(int page, int size, String sort, boolean isAsc, String title) {
+    public ResponseDto<Page<GetBookResponseDto>> getAllBook(int page, int size, String sort, boolean isAsc, String title) {
         title = title.trim();
-        if (!title.isEmpty()) {
-            if (bookRepository.findAllByTitleContains(title).isEmpty()) {
-                throw new BookSearchNotFoundException(NOT_FOUND_SEARCH_TITLE_BOOK, title);
-            }
-        } else {
-            if (bookRepository.findAll().isEmpty()) {
-                throw new BookNotFoundException(NOT_FOUND_BOOK);
-            }
-        }
         PageRequest pageRequest = PageRequest.of(page, size, !isAsc ? Sort.by(sort).descending() : Sort.by(sort).ascending());
-        Page<Book> books = bookRepository.findAllByTitleContains(pageRequest, title);
-        return ResponseDto.success(200, convertToDtoList(books));
+        Page<GetBookResponseDto> books = bookRepository.findAllByTitleContains(pageRequest, title);
+        return ResponseDto.success(200, books);
     }
 
 
@@ -101,24 +92,6 @@ public class BookServiceImpl implements BookService {
                 .createdAt(book.getCreatedAt())
                 .modifiedAt(book.getModifiedAt())
                 .build();
-    }
-
-
-    private List<GetBookResponseDto> convertToDtoList(Page<Book> books) {
-        List<GetBookResponseDto> dtoList = new ArrayList<>();
-        for (Book book : books) {
-            GetBookResponseDto dto = GetBookResponseDto.builder()
-                    .title(book.getTitle())
-                    .author(book.getAuthor())
-                    .publisher(book.getPublisher())
-                    .image(book.getImage())
-                    .category(book.getCategory())
-                    .createdAt(book.getCreatedAt())
-                    .modifiedAt(book.getModifiedAt())
-                    .build();
-            dtoList.add(dto);
-        }
-        return dtoList;
     }
 
 
