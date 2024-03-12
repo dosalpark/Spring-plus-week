@@ -14,7 +14,7 @@ public interface BoardRepositoryCustom {
      * @param pageable pageing처리에 필요한 값들 입력받음
      * @return Page<GetBoardResponseDto>
      */
-    Page<GetBoardResponseDto> findAll(Pageable pageable);
+    Page<GetBoardResponseDto> findAllBoard(Pageable pageable);
 
 
     /**

@@ -34,7 +34,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     private final QueryFactoryConfig config;
 
     @Override
-    public Page<GetBoardResponseDto> findAll(Pageable pageable) {
+    public Page<GetBoardResponseDto> findAllBoard(Pageable pageable) {
         QBoard board = QBoard.board;
         List<GetBoardResponseDto> boardList = config.jpaQueryFactory()
                 .select(Projections.fields(GetBoardResponseDto.class,
