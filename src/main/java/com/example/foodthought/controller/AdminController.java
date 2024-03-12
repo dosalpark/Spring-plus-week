@@ -90,7 +90,7 @@ public class AdminController {
             @PathVariable Long boardId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "3") int size,
-            @RequestParam(defaultValue = "createAt") String sort,
+            @RequestParam(defaultValue = "createdAt") String sort,
             @RequestParam(defaultValue = "true") boolean isAsc) {
         return ResponseEntity.status(200).body(adminService.getAdminComment(boardId, page, size, sort, isAsc));
     }
