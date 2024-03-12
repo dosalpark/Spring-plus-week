@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
         for (Map.Entry<String, String> entry : errors.entrySet()) {
             String errorCode = entry.getKey();
             String errorMessage = entry.getValue();
-            log.error("url: {}, 메세지: {}, 에러코드: {}",request.getRequestURI(),errorCode,errorMessage);
+            log.error("url: {}, 메세지: {}, 에러코드: {}, \n StachTrace: {}",request.getRequestURI(),errorCode,errorMessage,ex.fillInStackTrace());
         }
         return ResponseEntity.badRequest().body(ResponseDto.fail(400, errors));
     }
@@ -43,19 +43,19 @@ public class GlobalExceptionHandler {
             log.error("url: {}, 메세지: {}",request.getRequestURI(),ex.getMessage());
             return ResponseEntity.badRequest().body(ResponseDto.fail(400, customMessage));
         }
-        log.error("url: {}, 메세지: {}",request.getRequestURI(),ex.getMessage());
+        log.error("url: {}, 메세지: {} \n stacktrace: {}",request.getRequestURI(),ex.getMessage(), ex.fillInStackTrace());
         return ResponseEntity.badRequest().body(ResponseDto.fail(400, ex.getMessage()));
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity handleAuthenticationException(AuthenticationException ex, HttpServletRequest request) {
-        log.error("url {}, message : {}", request.getRequestURI(), ex.getMessage());
+        log.error("url: {}, 메세지: {} \n stacktrace: {}",request.getRequestURI(),ex.getMessage(), ex.fillInStackTrace());
         return ResponseEntity.badRequest().body(ResponseDto.fail(400, ex.getMessage()));
     }
 
     @ExceptionHandler(MissingServletRequestPartException.class)
     public ResponseEntity handleMissingServletRequestPartException(MissingServletRequestPartException ex, HttpServletRequest request) {
-        log.error("url {}, message : {}", request.getRequestURI(), ex.getMessage());
+        log.error("url: {}, 메세지: {} \n stacktrace: {}",request.getRequestURI(),ex.getMessage(), ex.fillInStackTrace());
         return ResponseEntity.badRequest().body(ResponseDto.fail(400, ex.getMessage()));
     }
 
