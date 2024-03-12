@@ -37,11 +37,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity handleIllegalArgumentExceptions(IllegalArgumentException ex) {
+    public ResponseEntity handleIllegalArgumentExceptions(IllegalArgumentException ex, HttpServletRequest request) {
         if (ex.getMessage().contains("No enum constant com.example.foodthought.entity.Status.")) {
             String customMessage = ("상태값은 " + Arrays.toString(Status.values()) + "만 입력가능 합니다.");
+            log.error("url: {}, 메세지: {}",request.getRequestURI(),ex.getMessage());
             return ResponseEntity.badRequest().body(ResponseDto.fail(400, customMessage));
         }
+        log.error("url: {}, 메세지: {}",request.getRequestURI(),ex.getMessage());
         return ResponseEntity.badRequest().body(ResponseDto.fail(400, ex.getMessage()));
     }
 
