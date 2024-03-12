@@ -10,7 +10,7 @@ import com.example.foodthought.entity.*;
 import com.example.foodthought.exception.customException.BoardNotFoundException;
 import com.example.foodthought.exception.customException.BookNotFoundException;
 import com.example.foodthought.exception.customException.PermissionDeniedException;
-import com.example.foodthought.repository.BookRepository;
+import com.example.foodthought.repository.book.BookRepository;
 import com.example.foodthought.repository.CommentRepository;
 import com.example.foodthought.repository.LikeRepository;
 import com.example.foodthought.repository.board.BoardRepository;

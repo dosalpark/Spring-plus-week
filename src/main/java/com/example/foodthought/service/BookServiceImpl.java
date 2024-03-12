@@ -8,7 +8,7 @@ import com.example.foodthought.entity.Book;
 import com.example.foodthought.exception.customException.BookNotFoundException;
 import com.example.foodthought.exception.customException.BookSearchNotFoundException;
 import com.example.foodthought.exception.customException.ImageNotFoundException;
-import com.example.foodthought.repository.BookRepository;
+import com.example.foodthought.repository.book.BookRepository;
 import com.example.foodthought.util.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

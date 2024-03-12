@@ -8,7 +8,7 @@ import com.example.foodthought.entity.Like;
 import com.example.foodthought.entity.User;
 import com.example.foodthought.exception.customException.BoardNotFoundException;
 import com.example.foodthought.exception.customException.BookNotFoundException;
-import com.example.foodthought.repository.BookRepository;
+import com.example.foodthought.repository.book.BookRepository;
 import com.example.foodthought.repository.LikeRepository;
 import com.example.foodthought.repository.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
