@@ -12,7 +12,7 @@ import java.util.List;
 public class CommentResponseDto {
     private String contents;
     private String userId;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<CommentResponseDto> replies;
 

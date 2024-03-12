@@ -98,7 +98,7 @@ public class BookServiceImpl implements BookService {
                 .publisher(book.getPublisher())
                 .image(book.getImage())
                 .category(book.getCategory())
-                .createAt(book.getCreateAt())
+                .createdAt(book.getCreatedAt())
                 .modifiedAt(book.getModifiedAt())
                 .build();
     }
@@ -113,7 +113,7 @@ public class BookServiceImpl implements BookService {
                     .publisher(book.getPublisher())
                     .image(book.getImage())
                     .category(book.getCategory())
-                    .createAt(book.getCreateAt())
+                    .createdAt(book.getCreatedAt())
                     .modifiedAt(book.getModifiedAt())
                     .build();
             dtoList.add(dto);

@@ -14,6 +14,6 @@ public class GetBookResponseDto {
     private String publisher;
     private String image;
     private String category;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }
