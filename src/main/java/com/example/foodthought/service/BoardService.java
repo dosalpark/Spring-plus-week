@@ -7,8 +7,7 @@ import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.board.GetBoardResponseDto;
 import com.example.foodthought.dto.board.UpdateBoardRequestDto;
 import com.example.foodthought.entity.User;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface BoardService {
 
@@ -30,9 +29,9 @@ public interface BoardService {
      * @param size  default 10
      * @param sort  정렬기준(String)
      * @param isAsc ASC, DESC
-     * @return List<GetBoardResponseDto>
+     * @return Page<GetBoardResponseDto>
      */
-    public ResponseDto<List<GetBoardResponseDto>> getAllBoards(int page, int size, String sort, boolean isAsc);
+    public ResponseDto<Page<GetBoardResponseDto>> getAllBoards(int page, int size, String sort, boolean isAsc);
 
 
     /**
@@ -72,9 +71,9 @@ public interface BoardService {
      * @param size  default 10
      * @param sort  정렬기준(String)
      * @param isAsc ASC, DESC
-     * @return List<GetBoardAdminResponseDto>
+     * @return Page<GetBoardAdminResponseDto>
      */
-    public ResponseDto<List<GetBoardAdminResponseDto>> getAdminAllBoard(int page, int size, String sort, boolean isAsc);
+    public ResponseDto<Page<GetBoardAdminResponseDto>> getAdminAllBoard(int page, int size, String sort, boolean isAsc);
 
 
     /**

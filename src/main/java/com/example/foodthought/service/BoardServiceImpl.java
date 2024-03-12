@@ -10,10 +10,10 @@ import com.example.foodthought.entity.*;
 import com.example.foodthought.exception.customException.BoardNotFoundException;
 import com.example.foodthought.exception.customException.BookNotFoundException;
 import com.example.foodthought.exception.customException.PermissionDeniedException;
-import com.example.foodthought.repository.BoardRepository;
 import com.example.foodthought.repository.BookRepository;
 import com.example.foodthought.repository.CommentRepository;
 import com.example.foodthought.repository.LikeRepository;
+import com.example.foodthought.repository.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,10 +21,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.foodthought.entity.Status.*;
+import static com.example.foodthought.entity.Status.BLOCKED;
+import static com.example.foodthought.entity.Status.NOTICE;
 import static com.example.foodthought.exception.ErrorCode.*;
 
 @Service
@@ -43,18 +43,16 @@ public class BoardServiceImpl implements BoardService {
     public ResponseDto<Boolean> createBoard(CreateBoardRequestDto create, User user) {
         Book book = findBook(create.getBookId());
         boardRepository.save(toEntity(create, user));
-        boolean success = true;
-        return ResponseDto.success(201, success);
+        return ResponseDto.success(201, true);
     }
 
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseDto<List<GetBoardResponseDto>> getAllBoards(int page, int size, String sort, boolean isAsc) {
-        findAllBoard();
+    public ResponseDto<Page<GetBoardResponseDto>> getAllBoards(int page, int size, String sort, boolean isAsc) {
         PageRequest pageRequest = PageRequest.of(page, size, !isAsc ? Sort.by(sort).descending() : Sort.by(sort).ascending());
-        Page<Board> boards = boardRepository.findAllByStatusNot(BLOCKED, pageRequest);
-        return ResponseDto.success(200, convertToDtoList(boards));
+        Page<GetBoardResponseDto> boards = boardRepository.findAllByStatusIn(pageRequest);
+        return ResponseDto.success(200, boards);
     }
 
 
@@ -91,11 +89,10 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional(readOnly = true)
-    public ResponseDto<List<GetBoardAdminResponseDto>> getAdminAllBoard(int page, int size, String sort, boolean isAsc) {
-        findAllAdminBoard();
+    public ResponseDto<Page<GetBoardAdminResponseDto>> getAdminAllBoard(int page, int size, String sort, boolean isAsc) {
         PageRequest pageRequest = PageRequest.of(page, size, !isAsc ? Sort.by(sort).descending() : Sort.by(sort).ascending());
-        Page<Board> boards = boardRepository.findAll(pageRequest);
-        return ResponseDto.success(200, adminConvertToDtoList(boards));
+        Page<GetBoardAdminResponseDto> boards = boardRepository.findAllAdmin(pageRequest);
+        return ResponseDto.success(200, boards);
     }
 
 
@@ -118,19 +115,6 @@ public class BoardServiceImpl implements BoardService {
         return ResponseDto.success(200, true);
     }
 
-
-    private void findAllBoard() {
-        if (boardRepository.findAllByStatus(POST).isEmpty()) {
-            throw new BoardNotFoundException(NOT_FOUND_SEARCH_BOARD);
-        }
-    }
-
-
-    private void findAllAdminBoard() {
-        if (boardRepository.findAll().isEmpty()) {
-            throw new BoardNotFoundException(NOT_FOUND_SEARCH_BOARD);
-        }
-    }
 
     private Board findBoard(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(
@@ -162,41 +146,6 @@ public class BoardServiceImpl implements BoardService {
                 .image(book.getImage())
                 .category(book.getCategory())
                 .contents(board.getContents()).build();
-    }
-
-
-    private List<GetBoardResponseDto> convertToDtoList(Page<Board> boards) {
-        List<GetBoardResponseDto> dtoList = new ArrayList<>();
-        for (Board board : boards) {
-            Book book = findBook(board.getBookId());
-            GetBoardResponseDto dto = GetBoardResponseDto.builder()
-                    .title(book.getTitle())
-                    .author(book.getAuthor())
-                    .publisher(book.getPublisher())
-                    .image(book.getImage())
-                    .category(book.getCategory())
-                    .contents(board.getContents()).build();
-            dtoList.add(dto);
-        }
-        return dtoList;
-    }
-
-    private List<GetBoardAdminResponseDto> adminConvertToDtoList(Page<Board> boards) {
-        List<GetBoardAdminResponseDto> dtoList = new ArrayList<>();
-        for (Board board : boards) {
-            Book book = findBook(board.getBookId());
-            GetBoardAdminResponseDto dto = GetBoardAdminResponseDto.builder()
-                    .title(book.getTitle())
-                    .author(book.getAuthor())
-                    .publisher(book.getPublisher())
-                    .image(book.getImage())
-                    .category(book.getCategory())
-                    .contents(board.getContents())
-                    .Status(String.valueOf(board.getStatus()))
-                    .build();
-            dtoList.add(dto);
-        }
-        return dtoList;
     }
 
 
