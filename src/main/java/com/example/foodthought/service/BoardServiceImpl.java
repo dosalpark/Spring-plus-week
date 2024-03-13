@@ -51,7 +51,7 @@ public class BoardServiceImpl implements BoardService {
     @Transactional(readOnly = true)
     public ResponseDto<Page<GetBoardResponseDto>> getAllBoards(int page, int size, String sort, boolean isAsc) {
         PageRequest pageRequest = PageRequest.of(page, size, !isAsc ? Sort.by(sort).descending() : Sort.by(sort).ascending());
-        Page<GetBoardResponseDto> boards = boardRepository.findAll(pageRequest);
+        Page<GetBoardResponseDto> boards = boardRepository.findAllBoard(pageRequest);
         return ResponseDto.success(200, boards);
     }
 

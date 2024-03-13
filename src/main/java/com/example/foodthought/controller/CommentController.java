@@ -56,7 +56,7 @@ public class CommentController {
 
     // 댓글 조회
     @GetMapping("/{boardId}/comments")
-    public ResponseEntity<ResponseDto<Page<CommentResponseDto>>> getComment(
+    public ResponseEntity<ResponseDto<List<CommentResponseDto>>> getComment(
             @PathVariable Long boardId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "3") int size,
