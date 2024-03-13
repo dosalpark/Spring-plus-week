@@ -31,29 +31,31 @@ public class GlobalExceptionHandler {
         for (Map.Entry<String, String> entry : errors.entrySet()) {
             String errorCode = entry.getKey();
             String errorMessage = entry.getValue();
-            log.error("url: {}, 메세지: {}, 에러코드: {}",request.getRequestURI(),errorCode,errorMessage);
+            log.error("url: {}, 메세지: {}, 에러코드: {}, \n StachTrace: {}",request.getRequestURI(),errorCode,errorMessage,ex.fillInStackTrace());
         }
         return ResponseEntity.badRequest().body(ResponseDto.fail(400, errors));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity handleIllegalArgumentExceptions(IllegalArgumentException ex) {
+    public ResponseEntity handleIllegalArgumentExceptions(IllegalArgumentException ex, HttpServletRequest request) {
         if (ex.getMessage().contains("No enum constant com.example.foodthought.entity.Status.")) {
             String customMessage = ("상태값은 " + Arrays.toString(Status.values()) + "만 입력가능 합니다.");
+            log.error("url: {}, 메세지: {}",request.getRequestURI(),ex.getMessage());
             return ResponseEntity.badRequest().body(ResponseDto.fail(400, customMessage));
         }
+        log.error("url: {}, 메세지: {} \n stacktrace: {}",request.getRequestURI(),ex.getMessage(), ex.fillInStackTrace());
         return ResponseEntity.badRequest().body(ResponseDto.fail(400, ex.getMessage()));
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity handleAuthenticationException(AuthenticationException ex, HttpServletRequest request) {
-        log.error("url {}, message : {}", request.getRequestURI(), ex.getMessage());
+        log.error("url: {}, 메세지: {} \n stacktrace: {}",request.getRequestURI(),ex.getMessage(), ex.fillInStackTrace());
         return ResponseEntity.badRequest().body(ResponseDto.fail(400, ex.getMessage()));
     }
 
     @ExceptionHandler(MissingServletRequestPartException.class)
     public ResponseEntity handleMissingServletRequestPartException(MissingServletRequestPartException ex, HttpServletRequest request) {
-        log.error("url {}, message : {}", request.getRequestURI(), ex.getMessage());
+        log.error("url: {}, 메세지: {} \n stacktrace: {}",request.getRequestURI(),ex.getMessage(), ex.fillInStackTrace());
         return ResponseEntity.badRequest().body(ResponseDto.fail(400, ex.getMessage()));
     }
 

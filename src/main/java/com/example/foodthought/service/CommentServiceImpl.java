@@ -11,8 +11,8 @@ import com.example.foodthought.entity.Comment;
 import com.example.foodthought.entity.Status;
 import com.example.foodthought.entity.User;
 import com.example.foodthought.exception.customException.*;
-import com.example.foodthought.repository.BoardRepository;
 import com.example.foodthought.repository.CommentRepository;
+import com.example.foodthought.repository.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -239,7 +239,7 @@ public class CommentServiceImpl implements CommentService {
             CommentResponseDto dto = CommentResponseDto.builder()
                     .contents(comment.getContents())
                     .userId(comment.getUser().getUserId())
-                    .createAt(comment.getCreateAt())
+                    .createdAt(comment.getCreatedAt())
                     .modifiedAt(comment.getModifiedAt())
                     .build();
             addRepliesToResponse(comment, dto);
@@ -254,7 +254,7 @@ public class CommentServiceImpl implements CommentService {
             CommentResponseDto replyResponse = CommentResponseDto.builder()
                     .contents(reply.getContents())
                     .userId(reply.getUser().getUserId())
-                    .createAt(reply.getCreateAt())
+                    .createdAt(reply.getCreatedAt())
                     .modifiedAt(reply.getModifiedAt())
                     .build();
             commentResponseDto.addReply(replyResponse);
@@ -269,7 +269,7 @@ public class CommentServiceImpl implements CommentService {
             CommentAdminResponseDto dto = CommentAdminResponseDto.builder()
                     .contents(comment.getContents())
                     .userId(comment.getUser().getUserId())
-                    .createAt(comment.getCreateAt())
+                    .createAt(comment.getCreatedAt())
                     .modifiedAt(comment.getModifiedAt())
                     .status(comment.getStatus())
                     .build();
@@ -285,7 +285,7 @@ public class CommentServiceImpl implements CommentService {
             CommentAdminResponseDto dto = CommentAdminResponseDto.builder()
                     .contents(reply.getContents())
                     .userId(reply.getUser().getUserId())
-                    .createAt(reply.getCreateAt())
+                    .createAt(reply.getCreatedAt())
                     .modifiedAt(reply.getModifiedAt())
                     .status(reply.getStatus())
                     .build();

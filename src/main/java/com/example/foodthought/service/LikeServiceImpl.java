@@ -8,9 +8,9 @@ import com.example.foodthought.entity.Like;
 import com.example.foodthought.entity.User;
 import com.example.foodthought.exception.customException.BoardNotFoundException;
 import com.example.foodthought.exception.customException.BookNotFoundException;
-import com.example.foodthought.repository.BoardRepository;
-import com.example.foodthought.repository.BookRepository;
+import com.example.foodthought.repository.book.BookRepository;
 import com.example.foodthought.repository.LikeRepository;
+import com.example.foodthought.repository.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +49,7 @@ public class LikeServiceImpl implements LikeService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<List<LikeTopResponseDto>> findBoardByLikeTop3() {
-        List<Object[]> top3 = likeRepository.findBoardByLikeTop3();
+        List<Object[]> top3 = likeRepository.findBoardByLikeTop3();  //2
         List<LikeTopResponseDto> dtoList = new ArrayList<>();
         for (Object[] objects : top3) {
             Board board = (Board) objects[0];

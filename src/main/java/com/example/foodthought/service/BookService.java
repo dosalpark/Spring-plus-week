@@ -4,10 +4,10 @@ import com.example.foodthought.common.dto.ResponseDto;
 import com.example.foodthought.dto.book.CreateBookRequestDto;
 import com.example.foodthought.dto.book.GetBookResponseDto;
 import com.example.foodthought.dto.book.UpdateBookRequestDto;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 public interface BookService {
 
@@ -20,9 +20,9 @@ public interface BookService {
      * @param sort  정렬기준(String)
      * @param isAsc ASC, DESC
      * @param title 검색할 책 제목(선택)
-     * @return List<GetBookResponseDto>
+     * @return Page<GetBookResponseDto>
      */
-    public ResponseDto<List<GetBookResponseDto>> getAllBook(int page, int size, String sort, boolean isAsc, String title);
+    public ResponseDto<Page<GetBookResponseDto>> getAllBook(int page, int size, String sort, boolean isAsc, String title);
 
 
     /**

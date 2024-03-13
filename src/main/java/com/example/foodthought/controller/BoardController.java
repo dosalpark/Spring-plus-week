@@ -8,11 +8,10 @@ import com.example.foodthought.security.UserDetailsImpl;
 import com.example.foodthought.service.BoardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,10 +31,10 @@ public class BoardController {
 
     //전체 게시물 조회
     @GetMapping
-    public ResponseEntity<ResponseDto<List<GetBoardResponseDto>>> getAllBoards(
+    public ResponseEntity<ResponseDto<Page<GetBoardResponseDto>>> getAllBoards(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "createAt") String sort,
+            @RequestParam(defaultValue = "createdAt") String sort,
             @RequestParam(defaultValue = "false") boolean isAsc
     ) {
         return ResponseEntity.status(200).body(boardService.getAllBoards(page, size, sort, isAsc));

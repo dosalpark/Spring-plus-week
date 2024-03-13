@@ -8,6 +8,7 @@ import com.example.foodthought.security.UserDetailsImpl;
 import com.example.foodthought.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -59,7 +60,7 @@ public class CommentController {
             @PathVariable Long boardId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "3") int size,
-            @RequestParam(defaultValue = "createAt") String sort,
+            @RequestParam(defaultValue = "createdAt") String sort,
             @RequestParam(defaultValue = "true") boolean isAsc) {
         return ResponseEntity.status(200).body(commentService.getComment(boardId, page, size, sort, isAsc));
     }

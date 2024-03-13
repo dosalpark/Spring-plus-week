@@ -8,6 +8,7 @@ import com.example.foodthought.dto.book.CreateBookRequestDto;
 import com.example.foodthought.dto.book.UpdateBookRequestDto;
 import com.example.foodthought.dto.comment.CommentAdminResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,7 +50,7 @@ public class AdminService {
     }
 
 
-    public ResponseDto<List<GetBoardAdminResponseDto>> getAdminAllBoard(int page, int size, String sort, boolean isAsc) {
+    public ResponseDto<Page<GetBoardAdminResponseDto>> getAdminAllBoard(int page, int size, String sort, boolean isAsc) {
         return boardService.getAdminAllBoard(page, size, sort, isAsc);
     }
 

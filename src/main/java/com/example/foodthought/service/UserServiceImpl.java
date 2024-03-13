@@ -1,7 +1,6 @@
 package com.example.foodthought.service;
 
 import com.example.foodthought.common.dto.ResponseDto;
-import com.example.foodthought.controller.BoardController;
 import com.example.foodthought.dto.admin.GetUsersResponseDto;
 import com.example.foodthought.dto.user.CreateUserDto;
 import com.example.foodthought.dto.user.UpdateUserDto;
@@ -9,7 +8,11 @@ import com.example.foodthought.entity.*;
 import com.example.foodthought.exception.customException.ImageNotFoundException;
 import com.example.foodthought.exception.customException.PermissionDeniedException;
 import com.example.foodthought.exception.customException.UserNotFoundException;
-import com.example.foodthought.repository.*;
+import com.example.foodthought.repository.CommentRepository;
+import com.example.foodthought.repository.FollowRepository;
+import com.example.foodthought.repository.LikeRepository;
+import com.example.foodthought.repository.UserRepository;
+import com.example.foodthought.repository.board.BoardRepository;
 import com.example.foodthought.util.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
