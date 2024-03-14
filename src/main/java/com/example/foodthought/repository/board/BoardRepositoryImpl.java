@@ -43,6 +43,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                         book.publisher,
                         book.image,
                         book.category,
+                        board.user.userId,
                         board.contents))
                 .from(board)
                 .orderBy(createBoardOrderSpecifier(pageable).toArray(new OrderSpecifier[0]))
@@ -70,6 +71,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                         book.publisher,
                         book.image,
                         book.category,
+                        board.user.userId,
                         board.contents,
                         board.status))
                 .from(board)
