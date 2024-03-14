@@ -28,9 +28,6 @@ import static com.example.foodthought.test.DummyTest.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-//@Transactional
-//@SpringBootTest
-//@Rollback(value = false)
 @Import(QueryFactoryConfig.class)
 @ActiveProfiles("test")
 class BoardRepositoryTest {
@@ -53,14 +50,6 @@ class BoardRepositoryTest {
         boardRepository.save(TEST_ANOTHER_BOARD);
         boardRepository.save(TEST_BLOCK_BOARD);
         boardRepository.save(TEST_ANOTHER_USER_BOARD);
-//        GetBoardResponseDto testBoardResponse = TEST_BOARD_RESPONSE_DTO;
-//        GetBoardResponseDto testAnotherBoardResponse = TEST_ANOTHER_BOARD_RESPONSE_DTO;
-//        GetBoardResponseDto testAnotherUserBoardResponse = TEST_ANOTHER_USER_BOARD_RESPONSE_DTO;
-//        GetBoardResponseDto testBlockedBoardResponse = TEST_BLOCKED_BOARD_RESPONSE_DTO;
-//        GetBoardAdminResponseDto testAdminBoardResponse = TEST_ADMIN_BOARD_RESPONSE_DTO;
-//        GetBoardAdminResponseDto testAdminAnotherBoardResponse = TEST_ADMIN_ANOTHER_BOARD_RESPONSE_DTO;
-//        GetBoardAdminResponseDto testAdminAnotherUserBoardResponse = TEST_ADMIN_ANOTHER_USER_BOARD_RESPONSE_DTO;
-//        GetBoardAdminResponseDto testAdminBlockedBoardResponse = TEST_ADMIN_BLOCKED_BOARD_RESPONSE_DTO;
     }
 
     PageRequest getPageable() {
