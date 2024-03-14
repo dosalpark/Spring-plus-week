@@ -11,9 +11,11 @@ import com.example.foodthought.entity.*;
 public interface DummyTest extends CommonTest {
     Long TEST_BOOK_ID = 1L;
     Long TEST_ANOTHER_BOOK_ID = 2L;
+    Long TEST_NOT_FOUND_BOOK_ID = 3L;
     Long TEST_BOARD_ID = 1L;
     Long TEST_ANOTHER_BOARD_ID = 2L;
     Long TEST_BLOCKED_BOARD_ID = 3L;
+    Long TEST_NOT_FOUND_BOARD_ID = 4L;
     Long TEST_LIKE_ID = 1L;
     Long TEST_PARENT_COMMENT_ID = 1L;
     Long TEST_CHILD_COMMENT_ID = 2L;
@@ -48,8 +50,8 @@ public interface DummyTest extends CommonTest {
             .contents(TEST_UPDATE_BOARD_CONTENT)
             .build();
 
-    UpdateBoardRequestDto TEST_ANOTHER_UPDATE_BOARD_REQUEST_DTO = UpdateBoardRequestDto.builder()
-            .bookId(TEST_ANOTHER_BOOK_ID)
+    UpdateBoardRequestDto TEST_NOT_FOUND_BOOK_UPDATE_BOARD_REQUEST_DTO = UpdateBoardRequestDto.builder()
+            .bookId(TEST_NOT_FOUND_BOOK_ID)
             .contents(TEST_BOARD_CONTENT)
             .build();
 
