@@ -1,4 +1,4 @@
-package com.example.foodthought.board;
+package com.example.foodthought.test;
 
 import com.example.foodthought.dto.admin.UpdateStatusRequestDto;
 import com.example.foodthought.dto.board.CreateBoardRequestDto;
@@ -7,11 +7,8 @@ import com.example.foodthought.dto.board.GetBoardResponseDto;
 import com.example.foodthought.dto.board.UpdateBoardRequestDto;
 import com.example.foodthought.entity.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
-
-public interface BoardTest extends CommonTest {
+public interface DummyTest extends CommonTest {
     Long TEST_BOOK_ID = 1L;
     Long TEST_ANOTHER_BOOK_ID = 2L;
     Long TEST_BOARD_ID = 1L;

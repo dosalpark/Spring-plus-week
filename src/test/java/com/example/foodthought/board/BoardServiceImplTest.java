@@ -5,7 +5,9 @@ import com.example.foodthought.dto.admin.UpdateStatusRequestDto;
 import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.board.GetBoardResponseDto;
 import com.example.foodthought.dto.board.UpdateBoardRequestDto;
-import com.example.foodthought.entity.*;
+import com.example.foodthought.entity.Board;
+import com.example.foodthought.entity.Comment;
+import com.example.foodthought.entity.Like;
 import com.example.foodthought.exception.customException.BoardNotFoundException;
 import com.example.foodthought.exception.customException.BookNotFoundException;
 import com.example.foodthought.exception.customException.PermissionDeniedException;
@@ -13,8 +15,8 @@ import com.example.foodthought.repository.CommentRepository;
 import com.example.foodthought.repository.LikeRepository;
 import com.example.foodthought.repository.board.BoardRepository;
 import com.example.foodthought.repository.book.BookRepository;
-import com.example.foodthought.security.UserDetailsImpl;
 import com.example.foodthought.service.BoardServiceImpl;
+import com.example.foodthought.test.DummyTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,7 +43,7 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @ActiveProfiles("test")
-class BoardServiceImplTest implements BoardTest {
+class BoardServiceImplTest implements DummyTest {
     @Mock
     BoardRepository boardRepository;
     @Mock
@@ -50,17 +52,8 @@ class BoardServiceImplTest implements BoardTest {
     LikeRepository likeRepository;
     @Mock
     CommentRepository commentRepository;
-    @Mock
-    UserDetailsImpl userDetails;
     @InjectMocks
     BoardServiceImpl boardService;
-
-
-    void init() {
-        User testUser = TEST_USER;
-        Board testBoard = TEST_BOARD;
-        Book testBook = TEST_BOOK;
-    }
 
     @Test
     @DisplayName("게시물 작성 - 성공")
@@ -357,6 +350,7 @@ class BoardServiceImplTest implements BoardTest {
         assertEquals(200, response.getStatus());
         assertEquals(true, response.getData());
     }
+
     @Test
     @DisplayName("[관리자]게시물 삭제 - 게시물이 없을 때")
     void test18() {
@@ -384,8 +378,8 @@ class BoardServiceImplTest implements BoardTest {
         ResponseDto<Boolean> response = boardService.updateStatusBoard(TEST_BOARD_ID, requestDto);
 
         //then
-        assertEquals(200,response.getStatus());
-        assertEquals(true,response.getData());
+        assertEquals(200, response.getStatus());
+        assertEquals(true, response.getData());
     }
 
     @Test

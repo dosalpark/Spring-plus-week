@@ -1,4 +1,4 @@
-package com.example.foodthought.board;
+package com.example.foodthought.test;
 
 import com.example.foodthought.entity.User;
 
