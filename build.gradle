@@ -54,7 +54,8 @@ tasks.named('test') {
 }
 
 // === ⭐ QueryDsl 빌드 옵션 (선택) ===
-def querydslDir = "C:/Users/dosal/Desktop/javaSpring/week7Project/food-thought/build/generated/querydsl"
+//def querydslDir = "C:/Users/dosal/Desktop/javaSpring/week7Project/food-thought/build/generated/querydsl"
+def querydslDir = "~/Desktop/javaSpring/week7Project/food-thought/build/generated/querydsl"
 
 sourceSets {
     main.java.srcDirs += [ querydslDir ]

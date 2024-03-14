@@ -16,6 +16,7 @@ public class GetBoardResponseDto {
     private String publisher;
     private String image;
     private String category;
+    private String userId;
     private String contents;
 }
 

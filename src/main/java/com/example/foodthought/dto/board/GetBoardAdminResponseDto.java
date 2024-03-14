@@ -19,6 +19,7 @@ public class GetBoardAdminResponseDto {
     private String publisher;
     private String image;
     private String category;
+    private String userId;
     private String contents;
     @Enumerated(value = EnumType.STRING)
     private Status status;

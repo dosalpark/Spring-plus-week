@@ -128,7 +128,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
 
-    private void checkOwnerAndStatus(Board board, User user) {
+    public void checkOwnerAndStatus(Board board, User user) {
         if (!board.getUser().getId().equals(user.getId()) ||
                 board.getStatus().equals(BLOCKED) ||
                 board.getStatus().equals(NOTICE)) {
