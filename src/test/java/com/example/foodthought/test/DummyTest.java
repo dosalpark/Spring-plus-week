@@ -52,22 +52,46 @@ public interface DummyTest extends CommonTest {
             .bookId(TEST_ANOTHER_BOOK_ID)
             .contents(TEST_BOARD_CONTENT)
             .build();
+
     GetBoardResponseDto TEST_BOARD_RESPONSE_DTO = GetBoardResponseDto.builder()
             .title(TEST_RESPONSE_TITLE)
             .author(TEST_RESPONSE_AUTHOR)
             .publisher(TEST_RESPONSE_PUBLISHER)
             .image(TEST_RESPONSE_IMAGE)
             .category(TEST_RESPONSE_CATEGORY)
+            .userId(TEST_USER_USERID)
             .contents(TEST_RESPONSE_CONTENT)
             .build();
 
     GetBoardResponseDto TEST_ANOTHER_BOARD_RESPONSE_DTO = GetBoardResponseDto.builder()
-            .title("another" + TEST_RESPONSE_TITLE)
+            .title(TEST_RESPONSE_TITLE)
             .author(TEST_RESPONSE_AUTHOR)
             .publisher(TEST_RESPONSE_PUBLISHER)
             .image(TEST_RESPONSE_IMAGE)
             .category(TEST_RESPONSE_CATEGORY)
+            .userId(TEST_USER_USERID)
             .contents(TEST_RESPONSE_CONTENT)
+            .build();
+
+    GetBoardResponseDto TEST_BLOCKED_BOARD_RESPONSE_DTO = GetBoardResponseDto.builder()
+            .title(BLOCKED_PREFIX + TEST_RESPONSE_TITLE)
+            .author(BLOCKED_PREFIX + TEST_RESPONSE_AUTHOR)
+            .publisher(BLOCKED_PREFIX + TEST_RESPONSE_PUBLISHER)
+            .image(BLOCKED_PREFIX + TEST_RESPONSE_IMAGE)
+            .category(BLOCKED_PREFIX + TEST_RESPONSE_CATEGORY)
+            .userId(TEST_USER_USERID)
+            .contents(BLOCKED_PREFIX + TEST_RESPONSE_CONTENT)
+            .build();
+
+
+    GetBoardResponseDto TEST_ANOTHER_USER_BOARD_RESPONSE_DTO = GetBoardResponseDto.builder()
+            .title(ANOTHER_PREFIX + TEST_RESPONSE_TITLE)
+            .author(ANOTHER_PREFIX + TEST_RESPONSE_AUTHOR)
+            .publisher(ANOTHER_PREFIX + TEST_RESPONSE_PUBLISHER)
+            .image(ANOTHER_PREFIX + TEST_RESPONSE_IMAGE)
+            .category(ANOTHER_PREFIX + TEST_RESPONSE_CATEGORY)
+            .userId(ANOTHER_PREFIX + TEST_USER_USERID)
+            .contents(ANOTHER_PREFIX + TEST_RESPONSE_CONTENT)
             .build();
 
 
@@ -77,19 +101,44 @@ public interface DummyTest extends CommonTest {
             .publisher(TEST_RESPONSE_PUBLISHER)
             .image(TEST_RESPONSE_IMAGE)
             .category(TEST_RESPONSE_CATEGORY)
+            .userId(TEST_USER_USERID)
             .contents(TEST_RESPONSE_CONTENT)
             .status(TEST_RESPONSE_STATUS_POST)
             .build();
 
     GetBoardAdminResponseDto TEST_ADMIN_ANOTHER_BOARD_RESPONSE_DTO = GetBoardAdminResponseDto.builder()
-            .title("another" + TEST_RESPONSE_TITLE)
+            .title(TEST_RESPONSE_TITLE)
             .author(TEST_RESPONSE_AUTHOR)
             .publisher(TEST_RESPONSE_PUBLISHER)
             .image(TEST_RESPONSE_IMAGE)
             .category(TEST_RESPONSE_CATEGORY)
+            .userId(TEST_USER_USERID)
             .contents(TEST_RESPONSE_CONTENT)
+            .status(TEST_RESPONSE_STATUS_POST)
+            .build();
+
+    GetBoardAdminResponseDto TEST_ADMIN_BLOCKED_BOARD_RESPONSE_DTO = GetBoardAdminResponseDto.builder()
+            .title(BLOCKED_PREFIX + TEST_RESPONSE_TITLE)
+            .author(BLOCKED_PREFIX + TEST_RESPONSE_AUTHOR)
+            .publisher(BLOCKED_PREFIX + TEST_RESPONSE_PUBLISHER)
+            .image(BLOCKED_PREFIX + TEST_RESPONSE_IMAGE)
+            .category(BLOCKED_PREFIX + TEST_RESPONSE_CATEGORY)
+            .userId(TEST_USER_USERID)
+            .contents(BLOCKED_PREFIX + TEST_RESPONSE_CONTENT)
             .status(TEST_RESPONSE_STATUS_BLOCKED)
             .build();
+
+    GetBoardAdminResponseDto TEST_ADMIN_ANOTHER_USER_BOARD_RESPONSE_DTO = GetBoardAdminResponseDto.builder()
+            .title(ANOTHER_PREFIX + TEST_RESPONSE_TITLE)
+            .author(ANOTHER_PREFIX + TEST_RESPONSE_AUTHOR)
+            .publisher(ANOTHER_PREFIX + TEST_RESPONSE_PUBLISHER)
+            .image(ANOTHER_PREFIX + TEST_RESPONSE_IMAGE)
+            .category(ANOTHER_PREFIX + TEST_RESPONSE_CATEGORY)
+            .userId(ANOTHER_PREFIX + TEST_USER_USERID)
+            .contents(ANOTHER_PREFIX + TEST_RESPONSE_CONTENT)
+            .status(TEST_RESPONSE_STATUS_POST)
+            .build();
+
 
     UpdateStatusRequestDto TEST_STATUS_BLOCKED_UPDATE_REQUEST_DTO = UpdateStatusRequestDto.builder()
             .status(TEST_UPDATE_STATUS_BLOCKED_REQUEST_DTO)
@@ -102,6 +151,15 @@ public interface DummyTest extends CommonTest {
             .image(TEST_RESPONSE_IMAGE)
             .category(TEST_RESPONSE_CATEGORY)
             .build();
+
+    Book TEST_ANOTHER_BOOK = Book.builder()
+            .title(ANOTHER_PREFIX + TEST_RESPONSE_TITLE)
+            .author(ANOTHER_PREFIX + TEST_RESPONSE_AUTHOR)
+            .publisher(ANOTHER_PREFIX + TEST_RESPONSE_PUBLISHER)
+            .image(ANOTHER_PREFIX + TEST_RESPONSE_IMAGE)
+            .category(ANOTHER_PREFIX + TEST_RESPONSE_CATEGORY)
+            .build();
+
     Board TEST_BOARD = Board.builder()
             .user(TEST_USER)
             .bookId(TEST_BOOK_ID)
@@ -110,14 +168,12 @@ public interface DummyTest extends CommonTest {
             .build();
 
     Board TEST_ANOTHER_BOARD = Board.builder()
-            .id(TEST_ANOTHER_BOARD_ID)
             .user(TEST_USER)
             .contents(TEST_BOARD_CONTENT)
             .status(Status.POST)
-            .bookId(TEST_ANOTHER_BOOK_ID)
+            .bookId(TEST_BOOK_ID)
             .build();
     Board TEST_BLOCK_BOARD = Board.builder()
-            .id(TEST_BLOCKED_BOARD_ID)
             .user(TEST_USER)
             .bookId(TEST_BOOK_ID)
             .status(Status.BLOCKED)
@@ -125,7 +181,6 @@ public interface DummyTest extends CommonTest {
             .build();
 
     Board TEST_ANOTHER_USER_BOARD = Board.builder()
-            .id(TEST_ANOTHER_BOARD_ID)
             .user(TEST_ANOTHER_USER)
             .contents(TEST_BOARD_CONTENT)
             .status(Status.POST)
@@ -137,8 +192,6 @@ public interface DummyTest extends CommonTest {
             .board(TEST_BOARD)
             .user(TEST_USER)
             .build();
-
-
 
     Comment TEST_PARENT_COMMENT = Comment.builder()
             .commentId(TEST_PARENT_COMMENT_ID)
