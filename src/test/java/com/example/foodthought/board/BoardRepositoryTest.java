@@ -4,6 +4,9 @@ import com.example.foodthought.config.QueryFactoryConfig;
 import com.example.foodthought.dto.board.GetBoardAdminResponseDto;
 import com.example.foodthought.dto.board.GetBoardResponseDto;
 import com.example.foodthought.entity.Board;
+import com.example.foodthought.entity.Book;
+import com.example.foodthought.entity.Status;
+import com.example.foodthought.entity.User;
 import com.example.foodthought.exception.customException.BoardNotFoundException;
 import com.example.foodthought.repository.UserRepository;
 import com.example.foodthought.repository.board.BoardRepository;
@@ -42,13 +45,37 @@ class BoardRepositoryTest {
 
 
     public void setup() {
-        userRepository.save(TEST_USER);
-        userRepository.save(TEST_ANOTHER_USER);
-        bookRepository.save(TEST_BOOK);
-        bookRepository.save(TEST_ANOTHER_BOOK);
+        User testUser = userRepository.save(TEST_USER);
+        User testAnotherUser = userRepository.save(TEST_ANOTHER_USER);
+        Book testBook = bookRepository.save(TEST_BOOK);
+        Book testAnotherBook = bookRepository.save(TEST_ANOTHER_BOOK);
+        Board TEST_BOARD = Board.builder()
+                .user(testUser)
+                .bookId(testBook.getId())
+                .status(Status.POST)
+                .contents(TEST_BOARD_CONTENT)
+                .build();
         boardRepository.save(TEST_BOARD);
+        Board TEST_ANOTHER_BOARD = Board.builder()
+                .user(testUser)
+                .contents(TEST_BOARD_CONTENT)
+                .status(Status.POST)
+                .bookId(testBook.getId())
+                .build();
         boardRepository.save(TEST_ANOTHER_BOARD);
+        Board TEST_BLOCK_BOARD = Board.builder()
+                .user(testUser)
+                .bookId(testBook.getId())
+                .status(Status.BLOCKED)
+                .contents(TEST_BOARD_CONTENT)
+                .build();
         boardRepository.save(TEST_BLOCK_BOARD);
+        Board TEST_ANOTHER_USER_BOARD = Board.builder()
+                .user(testAnotherUser)
+                .contents(TEST_BOARD_CONTENT)
+                .status(Status.POST)
+                .bookId(testAnotherBook.getId())
+                .build();
         boardRepository.save(TEST_ANOTHER_USER_BOARD);
     }
 
@@ -67,11 +94,11 @@ class BoardRepositoryTest {
         setup();
 
         //when
-        List<Board> boardList = boardRepository.findBoardsByUser_Id(TEST_USER_ID);
+        List<Board> boardList = boardRepository.findBoardsByUser_Id(TEST_USER.getId());
 
         //then
         assertEquals(3, boardList.size());
-        assertEquals(TEST_USER_ID, boardList.stream().findAny().get().getUser().getId());
+        assertEquals(TEST_USER.getId(), boardList.stream().findAny().get().getUser().getId());
     }
 
     @Test

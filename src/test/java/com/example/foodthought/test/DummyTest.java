@@ -164,7 +164,7 @@ public interface DummyTest extends CommonTest {
 
     Board TEST_BOARD = Board.builder()
             .user(TEST_USER)
-            .bookId(TEST_BOOK_ID)
+            .bookId(TEST_BOOK.getId())
             .status(Status.POST)
             .contents(TEST_BOARD_CONTENT)
             .build();
@@ -173,11 +173,11 @@ public interface DummyTest extends CommonTest {
             .user(TEST_USER)
             .contents(TEST_BOARD_CONTENT)
             .status(Status.POST)
-            .bookId(TEST_BOOK_ID)
+            .bookId(TEST_BOOK.getId())
             .build();
     Board TEST_BLOCK_BOARD = Board.builder()
             .user(TEST_USER)
-            .bookId(TEST_BOOK_ID)
+            .bookId(TEST_BOOK.getId())
             .status(Status.BLOCKED)
             .contents(TEST_BOARD_CONTENT)
             .build();
@@ -186,7 +186,7 @@ public interface DummyTest extends CommonTest {
             .user(TEST_ANOTHER_USER)
             .contents(TEST_BOARD_CONTENT)
             .status(Status.POST)
-            .bookId(TEST_ANOTHER_BOOK_ID)
+            .bookId(TEST_ANOTHER_BOOK.getId())
             .build();
 
     Like TEST_LIKE = Like.builder()
@@ -209,3 +209,4 @@ public interface DummyTest extends CommonTest {
 //            .build();
 //    List<Comment> childComments = java.util.List.of(TEST_CHILD_COMMENT);
 }
+
