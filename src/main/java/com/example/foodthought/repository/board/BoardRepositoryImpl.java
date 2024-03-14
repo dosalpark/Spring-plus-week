@@ -48,16 +48,16 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                 .from(board)
                 .orderBy(createBoardOrderSpecifier(pageable).toArray(new OrderSpecifier[0]))
                 .join(book).on(board.bookId.eq(book.id))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .where(board.status.in(POST, NOTICE))
                 .fetch();
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), boardList.size());
 
         if (boardList.isEmpty()) {
             throw new BoardNotFoundException(NOT_FOUND_SEARCH_BOARD);
         }
 
-        return new PageImpl<>(boardList.subList(start, end), pageable, boardList.size());
+        return new PageImpl<>(boardList, pageable, boardList.size());
     }
 
 
@@ -76,6 +76,8 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                         board.status))
                 .from(board)
                 .orderBy(createBoardOrderSpecifier(pageable).toArray(new OrderSpecifier[0]))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .join(book).on(board.bookId.eq(book.id))
                 .fetch();
 
@@ -86,7 +88,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
             throw new BoardNotFoundException(NOT_FOUND_SEARCH_BOARD);
         }
 
-        return new PageImpl<>(boardList.subList(start, end), pageable, boardList.size());
+        return new PageImpl<>(boardList, pageable, boardList.size());
     }
 
 
