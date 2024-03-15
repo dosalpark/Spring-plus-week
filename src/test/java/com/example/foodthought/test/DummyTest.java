@@ -147,6 +147,7 @@ public interface DummyTest extends CommonTest {
             .build();
 
     Book TEST_BOOK = Book.builder()
+            .id(TEST_BOOK_ID)
             .title(TEST_RESPONSE_TITLE)
             .author(TEST_RESPONSE_AUTHOR)
             .publisher(TEST_RESPONSE_PUBLISHER)
@@ -155,6 +156,7 @@ public interface DummyTest extends CommonTest {
             .build();
 
     Book TEST_ANOTHER_BOOK = Book.builder()
+            .id(TEST_ANOTHER_BOOK_ID)
             .title(ANOTHER_PREFIX + TEST_RESPONSE_TITLE)
             .author(ANOTHER_PREFIX + TEST_RESPONSE_AUTHOR)
             .publisher(ANOTHER_PREFIX + TEST_RESPONSE_PUBLISHER)
@@ -163,6 +165,7 @@ public interface DummyTest extends CommonTest {
             .build();
 
     Board TEST_BOARD = Board.builder()
+            .id(TEST_BOARD_ID)
             .user(TEST_USER)
             .bookId(TEST_BOOK.getId())
             .status(Status.POST)
@@ -170,12 +173,14 @@ public interface DummyTest extends CommonTest {
             .build();
 
     Board TEST_ANOTHER_BOARD = Board.builder()
+            .id(TEST_ANOTHER_BOARD_ID)
             .user(TEST_USER)
             .contents(TEST_BOARD_CONTENT)
             .status(Status.POST)
             .bookId(TEST_BOOK.getId())
             .build();
     Board TEST_BLOCK_BOARD = Board.builder()
+            .id(TEST_BLOCKED_BOARD_ID)
             .user(TEST_USER)
             .bookId(TEST_BOOK.getId())
             .status(Status.BLOCKED)
@@ -183,6 +188,7 @@ public interface DummyTest extends CommonTest {
             .build();
 
     Board TEST_ANOTHER_USER_BOARD = Board.builder()
+            .id(TEST_BLOCKED_BOARD_ID)
             .user(TEST_ANOTHER_USER)
             .contents(TEST_BOARD_CONTENT)
             .status(Status.POST)
@@ -209,4 +215,3 @@ public interface DummyTest extends CommonTest {
 //            .build();
 //    List<Comment> childComments = java.util.List.of(TEST_CHILD_COMMENT);
 }
-
