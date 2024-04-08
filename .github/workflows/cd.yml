@@ -58,7 +58,7 @@ jobs: # 실행 작업 코드
           echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./application.properties
           ls -al
 
-          cd /home/runner/work/Spring-plus-week/src/test/resources
+          cd /home/runner/work/Spring-plus-week/Spring-plus-week/src/test/resources
           touch ./application-test_properties
           echo "${{ secrets.APPLICATION_TEST_PROPERTIES }}" > ./application-test.properties
           ls -al
@@ -71,10 +71,10 @@ jobs: # 실행 작업 코드
           pwd
 
           
-      # - name: Docker build # Docker 이미지 생성
-      #   run: |
-      #     docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PASS }}
-      #     docker build -f Dockerfile -t harrisbang/schedule:latest .
+      - name: Docker build # Docker 이미지 생성
+        run: |
+          docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PASS }}
+          docker build -f Dockerfile -t dosal/spring:latest .
       
 
           
