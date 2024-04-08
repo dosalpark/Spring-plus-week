@@ -20,7 +20,7 @@ jobs: # 실행 작업 코드
         run: |
           git config user.name dosalpark
           git config user.email psh_a@naver.com
-          git remote set-url origin https://github.com/dosalpark/Spring-plus-week.git .
+          git remote set-url origin https://github.com/dosalpark/Spring-plus-week.git
 
       - name: merge the dev into the main # main 브랜치에 dev 브랜치를 merge
         run: |
@@ -44,7 +44,7 @@ jobs: # 실행 작업 코드
           
       - name: main branch clone # main branch build 전 clone
         run: |
-          git clone --branch main https://github.com/dosalpark/Spring-plus-week.git
+          git clone --branch main https://github.com/dosalpark/Spring-plus-week.git .
           pwd
 
       - name: Make application.properties # Application.properties 생성
@@ -53,7 +53,7 @@ jobs: # 실행 작업 코드
           touch ./application.properties
           echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./application.properties
 
-          cd ./src/test/resources
+          cd /home/runner/work/Spring-plus-week/src/test/resources
           touch ./application-test_properties
           echo "${{ secrets.APPLICATION_TEST_PROPERTIES }}" > ./application-test.properties
 
