@@ -1,7 +1,6 @@
 name: CD
 on:
   pull_request:
-    types: [labeled]
     branches:
       - dev
 jobs:
