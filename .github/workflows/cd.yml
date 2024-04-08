@@ -32,7 +32,7 @@ jobs: # 실행 작업 코드
           branch: main
           github_token: ${{ secrets.REPO_KEY }}
 
-  build: 
+  upload: 
     runs-on: ubuntu-latest
     needs: merge
     
@@ -68,17 +68,9 @@ jobs: # 실행 작업 코드
         run: |
           chmod +x ./gradlew
           ./gradlew clean build
-          pwd
 
-
-  EcrUpload: 
-    runs-on: ubuntu-latest
-    needs: build
-    
-    steps:
       - name: Docker build # Docker 이미지 생성
         run: |
-          pwd
           docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PASS }}
           docker build -f Dockerfile -t dosal/spring:latest .
 
@@ -96,7 +88,6 @@ jobs: # 실행 작업 코드
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY}}
           aws-region: ${{ secrets.AWS_RESION}}
           
-
       - name: AWS ECR upload # Docker image upload
         run: |
           aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 339713047224.dkr.ecr.ap-northeast-2.amazonaws.com
