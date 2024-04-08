@@ -68,6 +68,7 @@ jobs: # 실행 작업 코드
         run: |
           chmod +x ./gradlew
           ./gradlew clean build
+          pwd
 
 
   EcrUpload: 
@@ -77,6 +78,7 @@ jobs: # 실행 작업 코드
     steps:
       - name: Docker build # Docker 이미지 생성
         run: |
+          pwd
           docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PASS }}
           docker build -f Dockerfile -t dosal/spring:latest .
 
