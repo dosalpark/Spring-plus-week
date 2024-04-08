@@ -81,13 +81,13 @@ jobs: # 실행 작업 코드
           sudo unzip awscliv2.zip
           sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
 
-      - name: AWS config # AWS연결설정
-        run: |
-          aws configure
-          ${{ secrets.AWS_ACCESS_KEY}}
-          ${{ secrets.AWS_SECRET_KEY}}
-          ${{ secrets.AWS_RESION}}
-          aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 339713047224.dkr.ecr.ap-northeast-2.amazonaws.com
+      - name: Configure AWS credientials  # AWS연결설정
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY}}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY}}
+          aws-region: ${{ secrets.AWS_RESION}}
+          #aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 339713047224.dkr.ecr.ap-northeast-2.amazonaws.com
 
       - name: AWS ECR upload # Docker image upload
         run: |
