@@ -1,0 +1,23 @@
+name: CD
+on:
+  pull_request:
+    types: [labeled]
+    branches:
+      - dev
+jobs:
+  RunActions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Automatically Merge PR
+        uses: plm9606/automerge_actions@1.2.2
+        with:
+          # The label name to automatically merge. Default: automerge".
+          label-name: automerge
+          # The number of reviewers to automatically merge. default: 1
+          reviewers-number: 1
+          # 브랜치 병합 명령어 ("merge", "squash", "rebase"). default: merge
+          merge-method: merge
+          # 병합된 브랜치를 봇이 삭제하도록 허용 default: false
+          auto-delete: false
+          # GitHub WebHook Secret Token
+          github-token: ${{ secrets.GITHUB_TOKEN }}
