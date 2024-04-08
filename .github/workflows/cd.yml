@@ -1,7 +1,7 @@
 name: Merge Dev to Main
 
 on: # 발생 이벤트 타입
-  push: # push 이벤트 발생 시
+  pull_request: # push 이벤트 발생 시
     branches: # 타겟 브랜치
       - main
       
