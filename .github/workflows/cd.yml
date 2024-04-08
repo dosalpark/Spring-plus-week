@@ -18,8 +18,9 @@ jobs: # 실행 작업 코드
           
       - name: git Config
         run: |
-          git config user.name Master
-          git config user.email Master@Master.com
+          git config user.name dosalpark
+          git config user.email psh_a@naver.com
+          git remote set-url origin https://github.com/dosalpark/Spring-plus-week.git
 
       - name: main브랜치에서 dev브랜치를 merge
         run: |
@@ -29,6 +30,6 @@ jobs: # 실행 작업 코드
         uses: ad-m/github-push-action@master
         with:
           branch: main
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.REPO_KEY }}
 
           
