@@ -34,6 +34,7 @@ jobs: # 실행 작업 코드
 
   build: 
     runs-on: ubuntu-latest
+    needs: merge
     
     steps:
       - name: JDK 17 setup # JDK 17 설치
@@ -71,6 +72,7 @@ jobs: # 실행 작업 코드
 
   EcrUpload: 
     runs-on: ubuntu-latest
+    needs: build
     
     steps:
       - name: Docker build # Docker 이미지 생성
