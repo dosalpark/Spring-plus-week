@@ -41,6 +41,11 @@ jobs: # 실행 작업 코드
         with:
           java-version: '17'
           distribution: "adopt"
+          
+      - name: main branch clone # main branch build 전 clone
+        run: |
+          git clone --branch main https://github.com/dosalpark/Spring-plus-week.git
+          pwd
 
       - name: Make application.properties # Application.properties 생성
         run: |
