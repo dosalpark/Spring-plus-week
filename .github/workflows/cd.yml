@@ -50,6 +50,9 @@ jobs: # 실행 작업 코드
 
       - name: Make application.properties # Application.properties 생성
         run: |
+          mkdir ./src/main/resources
+          mkdir ./src/test/resources
+          
           cd ./src/main/resources
           touch ./application.properties
           echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./application.properties
