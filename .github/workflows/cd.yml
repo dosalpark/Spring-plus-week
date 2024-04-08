@@ -1,0 +1,34 @@
+name: Merge Dev to Main
+
+on: # 발생 이벤트 타입
+  push: # push 이벤트 발생 시
+    branches: # 타겟 브랜치
+      - main
+      
+jobs: # 실행 작업 코드
+  merge: # merge 실행
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 메인브랜치 이동
+        uses: actions/checkout@v2
+        with:
+          ref: 'main'
+          fetch-depth: '0'
+          
+      - name: git Config
+        run: |
+          git config user.name Master
+          git config user.email Master@Master.com
+
+      - name: main브랜치에서 dev브랜치를 merge
+        run: |
+          git merge origin/dev --no-edit
+
+      - name: Push changes to main branch # merge 내용들을 main 브랜치로 최종 push
+        uses: ad-m/github-push-action@master
+        with:
+          branch: main
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+          
