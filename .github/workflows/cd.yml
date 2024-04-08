@@ -75,7 +75,8 @@ jobs: # 실행 작업 코드
         run: |
           docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PASS }}
           docker build -f Dockerfile -t dosal/spring:latest .
-          ls -al /application
+          cd /application
+          ls -al
       
 
           
