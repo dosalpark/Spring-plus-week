@@ -1,4 +1,4 @@
-name: Merge Dev to Main
+name: CD
 
 on: # 발생 이벤트 타입
   pull_request: # push 이벤트 발생 시
@@ -63,12 +63,16 @@ jobs: # 실행 작업 코드
           echo "${{ secrets.APPLICATION_TEST_PROPERTIES }}" > ./application-test.properties
           ls -al
 
-
       - name: Build with Gradle # project Build
         run: |
           chmod +x ./gradlew
           ./gradlew clean build
-          
+
+
+  EcrUpload: 
+    runs-on: ubuntu-latest
+    
+    steps:
       - name: Docker build # Docker 이미지 생성
         run: |
           docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PASS }}
