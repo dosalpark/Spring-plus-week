@@ -68,17 +68,29 @@ jobs: # 실행 작업 코드
         run: |
           chmod +x ./gradlew
           ./gradlew clean build
-          pwd
-
           
       - name: Docker build # Docker 이미지 생성
         run: |
-          sudo mkdir /application
           docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PASS }}
           docker build -f Dockerfile -t dosal/spring:latest .
-          ls -al
-          cd /application
-          ls -al
-      
 
-          
+      - name: AWS-cli setup # AWS CLI 설치
+        run: |
+          sudo apt install unzip
+          sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          sudo unzip awscliv2.zip
+          sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
+
+      - name: AWS config # AWS연결설정
+        run: |
+          aws configure
+          ${{ secrets.AWS_ACCESS_KEY}}
+          ${{ secrets.AWS_SECRET_KEY}}
+          ${{ secrets.AWS_RESION}}
+          aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 339713047224.dkr.ecr.ap-northeast-2.amazonaws.com
+
+      - name: AWS ECR upload # Docker image upload
+        run: |
+          docker tag dosal/spring:latest 339713047224.dkr.ecr.ap-northeast-2.amazonaws.com/pct-image-repo:latest
+          docker push 339713047224.dkr.ecr.ap-northeast-2.amazonaws.com/pct-image-repo:latest
+
