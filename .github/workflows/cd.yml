@@ -23,7 +23,7 @@ jobs: # 실행 작업 코드
 
       - name: main브랜치에서 dev브랜치를 merge
         run: |
-          git merge origin/dev --no-edit
+          git merge https://github.com/dosalpark/Spring-plus-week.git/dev --no-edit
 
       - name: Push changes to main branch # merge 내용들을 main 브랜치로 최종 push
         uses: ad-m/github-push-action@master
