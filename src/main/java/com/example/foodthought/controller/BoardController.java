@@ -20,6 +20,11 @@ public class BoardController {
 
     private final BoardService boardService;
 
+    @GetMapping("/asdfgh")
+    public String test(){
+        return "hi";
+    }
+
 
     //게시물 생성
     @PostMapping
